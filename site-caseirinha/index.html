@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caseirinha da Casa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#120807;
+    --bg-2:#1e0b09;
+    --molho:#e3261b;
+    --molho-escuro:#8f1009;
+    --brasa:#ff7a1a;
+    --creme:#fff1d6;
+    --verde:#0f5a3a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--bg);
+    color:var(--creme);
+    font-family:'Inter',system-ui,sans-serif;
+    overflow-x:hidden;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    isolation:isolate;
+    background:
+      radial-gradient(60% 70% at 78% 70%, rgba(227,38,27,.55) 0%, rgba(143,16,9,.25) 45%, transparent 75%),
+      radial-gradient(50% 50% at 10% 0%, rgba(255,122,26,.12) 0%, transparent 70%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+  }
+  /* granulado */
+  .hero::before{
+    content:"";
+    position:absolute;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    opacity:.12;
+    mix-blend-mode:overlay;
+    pointer-events:none;
+    z-index:-1;
+  }
+
+  /* nav */
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px clamp(16px,4vw,56px);
+    position:relative;z-index:5;
+  }
+  .marca{
+    font-family:'Anton',sans-serif;
+    font-size:22px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--creme);text-decoration:none;
+    display:flex;align-items:center;gap:10px;
+  }
+  .marca .gota{
+    width:12px;height:16px;background:var(--molho);
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    transform:rotate(180deg);
+    box-shadow:0 0 14px var(--molho);
+  }
+
+  /* palco */
+  .palco{
+    flex:1;
+    position:relative;
+    padding:0 clamp(16px,4vw,56px);
+    display:flex;flex-direction:column;justify-content:center;
+  }
+
+  .tag{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:13px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--brasa);
+    margin-bottom:clamp(8px,1.5vw,18px);
+    opacity:0;animation:sobe .7s .1s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .tag::before{content:"";width:36px;height:2px;background:var(--brasa)}
+
+  h1.titulo{
+    font-family:'Anton','Impact','Haettenschweiler','Arial Narrow Bold',sans-serif;
+    font-weight:400;
+    text-transform:uppercase;
+    line-height:.84;
+    letter-spacing:-.005em;
+    position:relative;z-index:2;
+    filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));
+  }
+  h1.titulo span{display:block;overflow:hidden}
+  h1.titulo span > i{
+    display:block;font-style:normal;
+    transform:translateY(105%);
+    animation:revela .9s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .hero{--f:min(19.6vw, 34vh)}
+  h1.titulo span{padding-bottom:.06em;margin-bottom:-.06em}
+  .l1{
+    font-size:var(--f);
+    color:var(--creme);
+    text-shadow:0 .04em 0 var(--molho-escuro);
+  }
+  .l1 > i{animation-delay:.15s !important}
+  .l2{
+    font-size:var(--f);
+    color:var(--molho);
+    text-shadow:0 .04em 0 #4a0603;
+  }
+  .l2 > i{animation-delay:.32s !important}
+
+  .rodape-hero{
+    display:flex;align-items:center;gap:28px;flex-wrap:wrap;
+    margin-top:clamp(18px,3vw,36px);
+    position:relative;z-index:3;
+    max-width:min(560px, 52vw);
+    opacity:0;animation:sobe .8s .7s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  .rodape-hero p{
+    font-size:clamp(15px,1.25vw,18px);line-height:1.5;font-weight:500;
+    color:rgba(255,241,214,.78);
+    flex:1 1 260px;
+  }
+
+  /* mascote */
+  .mascote{
+    position:absolute;
+    /* ocupa o espaço livre à direita do "DA CASA" (que mede ~3,11× o tamanho da fonte) */
+    right:-3vw;
+    bottom:-2vh;
+    width:calc(100vw - var(--f) * 3.11 - 2vw);
+    z-index:3;
+    pointer-events:none;
+    opacity:0;
+    animation:entra 1s .45s cubic-bezier(.2,.9,.25,1.15) forwards;
+  }
+  .mascote img{
+    width:100%;height:auto;display:block;
+    filter:drop-shadow(0 30px 40px rgba(0,0,0,.55));
+    animation:flutua 5s 1.5s ease-in-out infinite;
+  }
+
+  /* faixa rolando */
+  .faixa{
+    position:relative;z-index:4;
+    background:var(--molho);
+    color:var(--creme);
+    border-top:2px solid #ff4b3f;
+    overflow:hidden;
+    transform:rotate(-1.2deg) scale(1.03);
+    margin-bottom:10px;
+  }
+  .faixa .trilho{
+    display:flex;gap:40px;white-space:nowrap;
+    padding:14px 0;
+    width:max-content;
+    animation:rola 26s linear infinite;
+    font-family:'Anton',sans-serif;font-size:22px;letter-spacing:.06em;text-transform:uppercase;
+  }
+  .faixa .trilho span{display:inline-flex;align-items:center;gap:40px}
+  .faixa .trilho span::after{content:"🌶";font-size:18px}
+
+  @keyframes revela{to{transform:translateY(0)}}
+  @keyframes sobe{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes entra{from{opacity:0;transform:translateY(60px) rotate(6deg) scale(.92)}to{opacity:1;transform:none}}
+  @keyframes flutua{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-12px) rotate(-1.5deg)}}
+  @keyframes rola{to{transform:translateX(-50%)}}
+
+  /* ---------- CELULAR ---------- */
+  @media (max-width: 820px){
+    .palco{justify-content:flex-start;padding-top:4vh;text-align:left}
+    .l1,.l2{font-size:19.4vw}
+    .rodape-hero{max-width:100%}
+    .mascote{
+      position:relative;right:auto;bottom:auto;
+      width:min(92vw, 460px);
+      margin:28px auto 0;
+    }
+  }
+  @media (max-width: 480px){
+    .marca{font-size:18px}
+    .faixa .trilho{font-size:18px}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation:none !important}
+    h1.titulo span > i{transform:none}
+    .tag,.rodape-hero,.mascote{opacity:1}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <header class="nav">
+    <div class="marca"><span class="gota"></span>O tal do Du</div>
+  </header>
+
+  <div class="palco">
+    <div class="tag">Molho de pimenta artesanal</div>
+
+    <h1 class="titulo" aria-label="Caseirinha da Casa">
+      <span class="l1"><i>Caseirinha</i></span>
+      <span class="l2"><i>Da Casa</i></span>
+    </h1>
+
+    <div class="rodape-hero">
+      <p>Feita em casa, do jeito que o Du gosta. Pouco ingrediente, muita personalidade e aquela ardida que deixa saudade.</p>
+    </div>
+
+    <div class="mascote">
+      <img src="assets/mascote.png" alt="Mascote do O tal do Du abraçando a garrafa de pimenta Caseirinha da Casa">
+    </div>
+  </div>
+
+  <div class="faixa" aria-hidden="true">
+    <div class="trilho">
+      <span>Caseirinha da Casa</span><span>Feita à mão</span><span>Arde na medida</span><span>Receita do Du</span>
+      <span>Caseirinha da Casa</span><span>Feita à mão</span><span>Arde na medida</span><span>Receita do Du</span>
+      <span>Caseirinha da Casa</span><span>Feita à mão</span><span>Arde na medida</span><span>Receita do Du</span>
+      <span>Caseirinha da Casa</span><span>Feita à mão</span><span>Arde na medida</span><span>Receita do Du</span>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

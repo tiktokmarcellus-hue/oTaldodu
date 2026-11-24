@@ -1,0 +1,23 @@
+# Servidor local simples para ver o site: http://localhost:8765
+$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$port = 8765
+$listener = New-Object System.Net.HttpListener
+$listener.Prefixes.Add("http://localhost:$port/")
+$listener.Start()
+Write-Host "Servindo $root em http://localhost:$port/"
+$types = @{ '.html'='text/html; charset=utf-8'; '.css'='text/css'; '.js'='application/javascript'; '.png'='image/png'; '.jpg'='image/jpeg'; '.webp'='image/webp'; '.svg'='image/svg+xml'; '.woff2'='font/woff2' }
+while ($listener.IsListening) {
+  $ctx = $listener.GetContext()
+  $path = [Uri]::UnescapeDataString($ctx.Request.Url.AbsolutePath.TrimStart('/'))
+  if ([string]::IsNullOrEmpty($path)) { $path = 'index.html' }
+  $file = [IO.Path]::GetFullPath((Join-Path $root $path))
+  if ($file.StartsWith($root) -and (Test-Path $file -PathType Leaf)) {
+    $bytes = [IO.File]::ReadAllBytes($file)
+    $ext = [IO.Path]::GetExtension($file).ToLower()
+    $ctx.Response.ContentType = $(if ($types.ContainsKey($ext)) { $types[$ext] } else { 'application/octet-stream' })
+    $ctx.Response.OutputStream.Write($bytes, 0, $bytes.Length)
+  } else {
+    $ctx.Response.StatusCode = 404
+  }
+  $ctx.Response.Close()
+}
