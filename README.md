@@ -5,8 +5,8 @@ Site demonstrativo do molho de pimenta **Caseirinha da Casa**, do O tal do Du.
 ## Estrutura
 
 - `site-caseirinha/` — hero do site
-  - `index.html` — página (fonte Anton, mascote com a garrafa)
-  - `assets/mascote.png` — mascote otimizado para o site (900px)
+  - `index.html` — hero só com a escrita "Caseirinha / Da Casa" (fonte Anton)
+  - `assets/mascote.png` — mascote otimizado para o site (900px, ainda sem uso)
   - `servidor.ps1` — servidor local para visualizar
 - `mascote-otaldodu/` — mascotes em alta (1536px, fundo transparente)
   - `mascote-1-confiante.png`
