@@ -1,0 +1,45 @@
+{
+  "source": {
+    "url": "http://localhost:8790/Leveled%20%E2%80%94%20Leveled%20-%20Official%20website.html",
+    "extractedAt": "2026-11-24T23:22:28.582Z",
+    "extractor": "dembrandt"
+  },
+  "colors": {
+    "palette": [],
+    "cssVariables": {}
+  },
+  "typography": {
+    "headingFont": "Mori",
+    "bodyFont": "Mori"
+  },
+  "spacing": {
+    "scale": [
+      "1px",
+      "4px",
+      "8px",
+      "16px",
+      "20px",
+      "24px",
+      "48.5px",
+      "55px",
+      "56px",
+      "60px",
+      "70px",
+      "80px",
+      "90px",
+      "97px",
+      "108px",
+      "125px",
+      "128px",
+      "144px",
+      "200px",
+      "208px"
+    ]
+  },
+  "radius": {
+    "scale": []
+  },
+  "shadows": {
+    "scale": []
+  }
+}

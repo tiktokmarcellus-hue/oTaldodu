@@ -1,18 +1,26 @@
-# O tal do Du — Caseirinha da Casa
+# O tal do Du: Caseirinha da Casa
 
 Site demonstrativo do molho de pimenta **Caseirinha da Casa**, do O tal do Du.
+No ar em https://caseirinha-da-casa.vercel.app
+
+## O site
+
+1. Tela de carregamento com a pimenta enchendo de vermelho
+2. Hero com o letreiro "Caseirinha / Da Casa" e o mascote segurando a garrafa
+3. Caseirinha, Mal criadinha, Venenosinha
+4. A história do Du, com ele recortado sem fundo
+5. Explorando a Gastronomia em São Paulo, com as fotos aparecendo na rolagem
 
 ## Estrutura
 
-- `site-caseirinha/` — hero do site
-  - `index.html` — hero só com a escrita "Caseirinha / Da Casa" (fonte Anton)
-  - `assets/mascote.png` — mascote otimizado para o site (900px, ainda sem uso)
-  - `servidor.ps1` — servidor local para visualizar
-- `mascote-otaldodu/` — mascotes em alta (1536px, fundo transparente)
-  - `mascote-1-confiante.png`
-  - `mascote-2-piscadinha.png`
-  - `mascote-3-gargalhada.png`
-  - `mascote-4-caseirinha.png`
+- `site-caseirinha/`
+  - `index.html`: o site inteiro
+  - `design-system/tokens.css`: cores, fontes, espaços e movimento
+  - `design-system/extraido/`: o que foi extraído dos sites de referência
+  - `assets/`: mascote, pimenta, recorte do Du e fotos em `comida/`
+  - `servidor.ps1`: servidor local para visualizar
+  - `deploy.ps1`: publica na Vercel (projeto caseirinha-da-casa)
+- `mascote-otaldodu/`: mascotes em alta (1536px, fundo transparente)
 
 ## Ver localmente
 
@@ -21,3 +29,9 @@ powershell -ExecutionPolicy Bypass -File site-caseirinha/servidor.ps1
 ```
 
 Depois abra http://localhost:8765
+
+## Publicar
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\site-caseirinha\deploy.ps1
+```

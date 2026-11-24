@@ -1,0 +1,45 @@
+{
+  "source": {
+    "url": "http://localhost:8790/Shopify%20Editions%20_%20Winter%20%2726.html",
+    "extractedAt": "2026-11-24T23:22:06.320Z",
+    "extractor": "dembrandt"
+  },
+  "colors": {
+    "palette": [],
+    "cssVariables": {}
+  },
+  "typography": {
+    "headingFont": "NeueMontreal",
+    "bodyFont": "NeueMontreal"
+  },
+  "spacing": {
+    "scale": [
+      "2px",
+      "3px",
+      "4px",
+      "5px",
+      "7px",
+      "8px",
+      "10px",
+      "12px",
+      "13px",
+      "14px",
+      "15px",
+      "20px",
+      "24px",
+      "40px",
+      "50px",
+      "60px",
+      "80px",
+      "100px",
+      "118.8px",
+      "130px"
+    ]
+  },
+  "radius": {
+    "scale": []
+  },
+  "shadows": {
+    "scale": []
+  }
+}

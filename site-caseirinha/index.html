@@ -4,81 +4,627 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Caseirinha da Casa</title>
+<meta name="description" content="A pimenta do Tal do Du.">
+<script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="design-system/tokens.css">
 <style>
-  :root{
-    --bg:#120807;
-    --bg-2:#1e0b09;
-    --molho:#e3261b;
-    --molho-escuro:#8f1009;
-    --creme:#fff1d6;
-    /* tamanho da letra: "CASEIRINHA" ocupa a largura toda sem estourar a altura */
-    --f:min(21vw, 46vh);
-  }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
-  body{background:var(--bg);overflow-x:hidden}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--verde-fundo);
+    color:var(--texto);
+    font-family:var(--fonte);
+    font-size:var(--t-corpo);
+    line-height:1.55;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{display:block;max-width:100%}
+  .js body.travado{overflow:hidden}
 
+  /* =========================================================
+     TELA DE CARREGAMENTO: a pimenta enche de vermelho
+     ========================================================= */
+  .carregando{
+    position:fixed;inset:0;z-index:50;
+    display:grid;place-items:center;
+    background:var(--verde-fundo);
+    color:var(--branco);
+    transition:transform 1s var(--sai);
+  }
+  .carregando.saindo{transform:translateY(-100%)}
+  .carregando.foi{display:none}
+  .carregando-miolo{display:grid;justify-items:center;gap:var(--e3)}
+  .pimenta-carga{
+    position:relative;
+    height:min(34vh,260px);
+    aspect-ratio:80/240;
+    animation:balanca 2.4s ease-in-out infinite;
+    transform-origin:50% 20%;
+  }
+  .pimenta-carga img{position:absolute;inset:0;width:100%;height:100%}
+  /* a de trás fica apagada, a da frente vai sendo revelada de baixo pra cima */
+  .pimenta-carga .vazia{filter:grayscale(1) brightness(.55);opacity:.35}
+  .pimenta-carga .cheia{clip-path:inset(calc(100% - var(--p,0%)) 0 0 0)}
+  .contador{
+    font-stretch:var(--largo);
+    font-weight:800;
+    font-size:var(--t-mini);
+    letter-spacing:.04em;
+    font-variant-numeric:tabular-nums;
+    opacity:.8;
+  }
+  @keyframes balanca{
+    0%,100%{transform:rotate(-4deg)}
+    50%{transform:rotate(4deg)}
+  }
+
+  /* =========================================================
+     1. HERO: o letreiro + o mascote com a Caseirinha
+     ========================================================= */
   .hero{
+    /* o mascote ocupa --m de largura; o letreiro (~4,6× a fonte) usa o resto */
+    --m:min(34vw,62vh);
+    --f:min(calc((100vw - var(--m) - 140px) / 4.6), 28vh);
     position:relative;
     min-height:100svh;
     display:grid;
     place-items:center;
-    padding:0 16px;
+    padding:var(--e5) var(--e2) var(--e4);
     overflow:hidden;
-    isolation:isolate;
-    background:
-      radial-gradient(60% 55% at 50% 60%, rgba(227,38,27,.35) 0%, rgba(143,16,9,.15) 50%, transparent 80%),
-      linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+    background:radial-gradient(75% 65% at 50% 45%, #0b5434 0%, var(--verde-fundo) 62%, var(--verde-noite) 100%);
   }
-  /* granulado */
-  .hero::before{
-    content:"";
-    position:absolute;inset:0;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
-    opacity:.12;
-    mix-blend-mode:overlay;
-    pointer-events:none;
-    z-index:-1;
+  .palco{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:clamp(0px,2vw,40px);
+    width:100%;
+    max-width:1500px;
+  }
+  .mascote{
+    width:var(--m);
+    height:auto;
+    flex:none;
+    filter:drop-shadow(0 30px 40px rgba(0,0,0,.35));
+  }
+  .hero-rodape{
+    position:absolute;left:var(--e3);right:var(--e3);bottom:var(--e3);
+    display:flex;justify-content:space-between;gap:var(--e2);
+    color:rgba(255,255,255,.7);
+    font-size:var(--t-mini);
+    line-height:1.3;
   }
 
-  h1{
-    font-family:'Anton','Impact','Haettenschweiler','Arial Narrow Bold',sans-serif;
+  /* ---------- o letreiro (mesmo da versão anterior) ---------- */
+  h1.letreiro{
+    font-family:var(--fonte-letreiro);
     font-weight:400;
     font-size:var(--f);
-    line-height:.86;
+    line-height:1;
     text-transform:uppercase;
     text-align:center;
-    filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));
+    position:relative;
+    flex:none;
   }
-  h1 span{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
-  h1 span > i{
-    display:block;font-style:normal;
-    transform:translateY(105%);
-    animation:revela .9s cubic-bezier(.2,.8,.2,1) forwards;
+  .linha{display:flex;justify-content:center;white-space:nowrap}
+  .l2{font-size:.56em;margin-top:.02em}
+  .sobe{display:inline-block}
+  .ch{
+    position:relative;
+    display:inline-block;
+    margin:0 .008em;
+    transform-origin:50% 100%;
+    transform:
+      translateY(calc((1 - var(--t) * var(--t)) * -.26em))
+      rotate(calc(var(--t) * 12deg))
+      scaleY(calc(1 + var(--t) * var(--t) * .32));
   }
-  .l1{color:var(--creme);text-shadow:0 .04em 0 var(--molho-escuro)}
-  .l1 > i{animation-delay:.15s}
-  .l2{color:var(--molho);text-shadow:0 .04em 0 #4a0603}
-  .l2 > i{animation-delay:.32s}
+  .l1 .ch{
+    color:#5b0b07;
+    text-shadow:
+      0 .012em 0 #4e0906,
+      0 .024em 0 #430805,
+      0 .036em 0 #380604,
+      0 .048em 0 #2d0503,
+      0 .06em .015em rgba(0,0,0,.6),
+      0 0 .06em rgba(255,240,220,.3);
+  }
+  .l2 .ch{
+    color:#3a0503;
+    text-shadow:
+      0 .015em 0 #300402,
+      0 .03em 0 #260302,
+      0 .045em 0 #1c0201,
+      0 .06em .015em rgba(0,0,0,.6),
+      0 0 .07em rgba(255,60,40,.4);
+  }
+  .ch[data-l]::after{
+    content:attr(data-l);
+    position:absolute;left:0;top:0;
+    color:transparent;
+    text-shadow:none;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-stroke:.006em #5a0a06;
+  }
+  .l1 .ch[data-l]::after{
+    background-image:linear-gradient(180deg,#ffffff 0%,#fff6e8 38%,#f3dcb6 50%,#fff8ec 62%,#ffeccc 100%);
+  }
+  .l2 .ch[data-l]::after{
+    background-image:linear-gradient(180deg,#ff8a73 0%,#ff4a3a 36%,#c8170f 50%,#ff5a47 64%,#e3261b 100%);
+  }
+  .ch.pimenta{width:.32em;height:.86em;vertical-align:baseline}
+  .ch.pimenta img{
+    position:absolute;left:50%;bottom:-.04em;
+    height:1.26em;width:auto;max-width:none;
+    transform:translateX(-50%);
+    filter:drop-shadow(0 .03em 0 #2d0503) drop-shadow(0 0 .04em rgba(255,90,60,.4));
+  }
+  .brilho{
+    position:absolute;
+    width:.26em;height:.26em;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 0 C21 14 26 19 40 20 C26 21 21 26 20 40 C19 26 14 21 0 20 C14 19 19 14 20 0Z' fill='white'/%3E%3C/svg%3E") center/contain no-repeat;
+    filter:drop-shadow(0 0 .05em #fff) drop-shadow(0 0 .12em rgba(255,240,220,.9));
+    pointer-events:none;
+    z-index:2;
+    animation:pisca 2.8s ease-in-out calc(1.8s + var(--d,0s)) infinite backwards;
+  }
+  @keyframes pisca{
+    0%,100%{transform:scale(.35) rotate(0);opacity:.35}
+    50%{transform:scale(1) rotate(45deg);opacity:1}
+  }
 
-  @keyframes revela{to{transform:translateY(0)}}
+  /* ---------- entrada do hero (só depois da tela de carregamento) ---------- */
+  .js .hero:not(.livre) .linha{clip-path:inset(-90% -8% -.1em -8%)}
+  .js .sobe{transform:translateY(115%)}
+  .js .mascote{opacity:0;transform:translateY(14%) rotate(5deg)}
+  .js .brilho{visibility:hidden}
+  .js .hero-rodape{opacity:0}
+
+  .aberto .sobe{
+    transform:none;
+    transition:transform var(--t-revela) var(--sai) calc(.1s + var(--i) * .045s);
+  }
+  .aberto .mascote{
+    opacity:1;transform:none;
+    transition:transform 1.4s var(--sai) .55s, opacity .7s ease .55s;
+  }
+  .aberto .ch.pimenta img{animation:cai .9s var(--mola) .75s backwards}
+  .aberto .brilho{visibility:visible}
+  .aberto .hero-rodape{opacity:1;transition:opacity .8s ease 1.2s}
+  @keyframes cai{
+    from{transform:translateX(-50%) translateY(-.8em) rotate(-25deg)}
+    to{transform:translateX(-50%)}
+  }
+
+  /* =========================================================
+     2. OS APELIDOS: três palavras empilhadas, de ponta a ponta
+     ========================================================= */
+  .apelidos{
+    background:var(--branco);
+    padding:var(--e6) var(--e3) var(--e5);
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+  }
+  .palavras{list-style:none}
+  .palavra{
+    display:block;
+    overflow:hidden;
+    font-stretch:var(--largo);
+    font-weight:900;
+    text-transform:uppercase;
+    line-height:.84;
+    letter-spacing:-.01em;
+    white-space:nowrap;
+    padding-top:.04em;
+  }
+  .palavra span{display:block;width:max-content}
+  .palavra:nth-child(1){color:var(--vermelho)}
+  .palavra:nth-child(2){color:var(--verde)}
+  .palavra:nth-child(3){color:var(--vermelho)}
+  .apelidos-nota{
+    margin-top:var(--e4);
+    align-self:flex-end;
+    max-width:24ch;
+    font-size:var(--t-corpo);
+    line-height:1.35;
+    color:var(--texto);
+  }
+  .js .palavra span{transform:translateY(105%)}
+  .js .apelidos-nota{opacity:0;transform:translateY(16px)}
+  .apelidos.visto .palavra span{
+    transform:none;
+    transition:transform 1.2s var(--sai) calc(var(--i) * .12s);
+  }
+  .apelidos.visto .apelidos-nota{
+    opacity:1;transform:none;
+    transition:opacity .8s ease .5s, transform 1s var(--sai) .5s;
+  }
+
+  /* =========================================================
+     3. A HISTÓRIA: o Du recortado + o texto
+     ========================================================= */
+  .historia{
+    position:relative;
+    background:var(--vermelho-fundo);
+    color:var(--branco);
+    overflow:hidden;
+    min-height:100svh;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    align-items:end;
+    padding:0 var(--e3);
+    column-gap:var(--e4);
+  }
+  /* o nome gigante vazando por trás */
+  .nome-fundo{
+    position:absolute;
+    left:0;top:50%;
+    transform:translate3d(var(--x,0px),-50%,0);
+    font-stretch:var(--largo);
+    font-weight:900;
+    font-size:min(30vw,52vh);
+    line-height:.8;
+    text-transform:uppercase;
+    white-space:nowrap;
+    color:var(--vermelho-sombra);
+    pointer-events:none;
+    user-select:none;
+    will-change:transform;
+  }
+  .du{
+    position:relative;
+    z-index:1;
+    justify-self:center;
+    align-self:end;
+    height:min(92svh,1000px);
+    width:auto;
+    max-width:none;
+  }
+  .historia-texto{
+    position:relative;
+    z-index:1;
+    align-self:center;
+    max-width:34rem;
+    padding:var(--e5) 0;
+  }
+  .historia-texto p + p{margin-top:var(--e3)}
+  .historia-texto .abre{
+    font-size:var(--t-intro);
+    font-weight:500;
+    line-height:1.12;
+    letter-spacing:-.015em;
+    margin-bottom:var(--e4);
+  }
+  .js .du{opacity:0;transform:translateY(12%)}
+  .js .historia-texto > *{opacity:0;transform:translateY(24px)}
+  .historia.visto .du{
+    opacity:1;transform:none;
+    transition:transform 1.4s var(--sai), opacity .8s ease;
+  }
+  .historia.visto .historia-texto > *{
+    opacity:1;transform:none;
+    transition:opacity .8s ease calc(.25s + var(--i) * .12s), transform 1.1s var(--sai) calc(.25s + var(--i) * .12s);
+  }
+
+  /* =========================================================
+     4. GASTRONOMIA: fotos espalhadas aparecendo no scroll
+     ========================================================= */
+  .gastronomia{
+    position:relative;
+    background:var(--branco);
+    height:360svh;
+  }
+  .gastronomia-titulo{
+    position:sticky;
+    top:0;
+    height:100svh;
+    display:grid;
+    place-items:center;
+    padding:0 var(--e3);
+    z-index:2;
+    pointer-events:none;
+  }
+  .gastronomia-titulo h2{
+    max-width:13ch;
+    text-align:center;
+    font-stretch:var(--largo);
+    font-weight:850;
+    font-size:var(--t-titulo);
+    line-height:.92;
+    letter-spacing:-.02em;
+    color:var(--verde);
+  }
+  .fotos{position:absolute;inset:0;z-index:1}
+  .foto{
+    position:absolute;
+    left:var(--x);top:var(--y);
+    width:var(--w);
+    transform:translate3d(0,var(--py,0px),0);
+    will-change:transform;
+  }
+  .foto figcaption{
+    font-size:var(--t-mini);
+    line-height:1.2;
+    color:var(--texto);
+    margin-bottom:6px;
+  }
+  .foto .quadro{overflow:hidden}
+  .foto img{width:100%;height:auto}
+  .js .foto .quadro{clip-path:inset(100% 0 0 0)}
+  .js .foto img{transform:scale(1.18)}
+  .js .foto figcaption{opacity:0}
+  .foto.visto .quadro{clip-path:inset(0 0 0 0);transition:clip-path 1.3s var(--sai)}
+  .foto.visto img{transform:none;transition:transform 1.6s var(--sai)}
+  .foto.visto figcaption{opacity:1;transition:opacity .6s ease .5s}
+
+  /* ---------- telas menores ---------- */
+  @media (max-width:900px){
+    .hero{--m:min(78vw,44svh);--f:calc((100vw - 40px) / 4.6);padding-top:var(--e6)}
+    .palco{flex-direction:column;gap:var(--e3)}
+    .hero-rodape{left:var(--e2);right:var(--e2);bottom:var(--e2)}
+
+    .apelidos{padding:var(--e6) var(--e2);min-height:auto}
+
+    .historia{grid-template-columns:1fr;padding:0 var(--e2)}
+    .historia-texto{order:-1;padding:var(--e5) 0 var(--e3)}
+    .du{height:min(78svh,720px)}
+    .nome-fundo{top:auto;bottom:8%;transform:translate3d(var(--x,0px),0,0);font-size:44vw}
+
+    .gastronomia{height:440svh}
+    .gastronomia-titulo h2{font-size:10.6vw;font-stretch:112%}
+    .foto{width:calc(var(--w) * 2.3)}
+    .foto:nth-child(odd){left:4%}
+    .foto:nth-child(even){left:auto;right:4%}
+  }
 
   @media (prefers-reduced-motion: reduce){
-    h1 span > i{animation:none;transform:none}
+    *,*::before,*::after{animation:none !important;transition:none !important}
+    .js .sobe,.js .mascote,.js .palavra span,.js .apelidos-nota,
+    .js .du,.js .historia-texto > *,.js .foto img{transform:none;opacity:1}
+    .js .hero-rodape,.js .foto figcaption{opacity:1}
+    .js .brilho{visibility:visible}
+    .js .foto .quadro,.js .hero .linha{clip-path:none}
+    .foto,.nome-fundo{transform:none}
   }
 </style>
 </head>
-<body>
+<body class="travado">
 
-<section class="hero">
-  <h1 aria-label="Caseirinha da Casa">
-    <span class="l1"><i>Caseirinha</i></span>
-    <span class="l2"><i>Da Casa</i></span>
-  </h1>
-</section>
+<!-- tela de carregamento -->
+<div class="carregando" id="carregando" aria-hidden="true">
+  <div class="carregando-miolo">
+    <div class="pimenta-carga" id="pimentaCarga">
+      <img class="vazia" src="assets/pimenta-i.svg" alt="">
+      <img class="cheia" src="assets/pimenta-i.svg" alt="">
+    </div>
+    <span class="contador" id="contador">0</span>
+  </div>
+</div>
 
+<main>
+
+  <!-- 1. hero -->
+  <section class="hero" id="hero">
+    <div class="palco">
+      <h1 class="letreiro" aria-label="Caseirinha da Casa">
+        <span class="linha l1" aria-hidden="true">
+          <span class="sobe" style="--i:0"><span class="ch" data-l="C" style="--t:-1">C</span></span>
+          <span class="sobe" style="--i:1"><span class="ch" data-l="A" style="--t:-.778">A</span></span>
+          <span class="sobe" style="--i:2"><span class="ch" data-l="S" style="--t:-.556">S</span></span>
+          <span class="sobe" style="--i:3"><span class="ch" data-l="E" style="--t:-.333">E</span></span>
+          <span class="sobe" style="--i:4"><span class="ch pimenta" style="--t:-.111"><img src="assets/pimenta-i.svg" alt=""></span></span>
+          <span class="sobe" style="--i:5"><span class="ch" data-l="R" style="--t:.111">R</span></span>
+          <span class="sobe" style="--i:6"><span class="ch" data-l="I" style="--t:.333">I</span></span>
+          <span class="sobe" style="--i:7"><span class="ch" data-l="N" style="--t:.556">N</span></span>
+          <span class="sobe" style="--i:8"><span class="ch" data-l="H" style="--t:.778">H</span></span>
+          <span class="sobe" style="--i:9"><span class="ch" data-l="A" style="--t:1">A</span></span>
+        </span>
+        <span class="linha l2" aria-hidden="true">
+          <span class="sobe" style="--i:5"><span class="ch" data-l="D" style="--t:-1">D</span></span>
+          <span class="sobe" style="--i:6"><span class="ch" data-l="A" style="--t:-.667">A</span></span>
+          <span class="sobe" style="--i:7"><span class="ch" style="--t:-.333">&nbsp;</span></span>
+          <span class="sobe" style="--i:8"><span class="ch" data-l="C" style="--t:0">C</span></span>
+          <span class="sobe" style="--i:9"><span class="ch" data-l="A" style="--t:.333">A</span></span>
+          <span class="sobe" style="--i:10"><span class="ch" data-l="S" style="--t:.667">S</span></span>
+          <span class="sobe" style="--i:11"><span class="ch" data-l="A" style="--t:1">A</span></span>
+        </span>
+        <i class="brilho" aria-hidden="true" style="left:-1%;top:14%"></i>
+        <i class="brilho" aria-hidden="true" style="left:57%;top:4%;--d:.9s"></i>
+        <i class="brilho" aria-hidden="true" style="left:96%;top:56%;--d:1.7s"></i>
+        <i class="brilho" aria-hidden="true" style="left:26%;top:84%;--d:2.2s"></i>
+        <i class="brilho" aria-hidden="true" style="left:69%;top:66%;--d:.4s"></i>
+      </h1>
+      <img class="mascote" src="assets/mascote.png" alt="O mascote do Tal do Du segurando a garrafa da Caseirinha da Casa" width="900" height="900">
+    </div>
+    <div class="hero-rodape">
+      <span>A pimenta do Tal do Du</span>
+      <span>São Paulo</span>
+    </div>
+  </section>
+
+  <!-- 2. os apelidos -->
+  <section class="apelidos" id="apelidos" aria-label="Os apelidos da pimenta">
+    <ul class="palavras">
+      <li class="palavra" style="--i:0"><span class="encaixa">Caseirinha</span></li>
+      <li class="palavra" style="--i:1"><span class="encaixa">Mal criadinha</span></li>
+      <li class="palavra" style="--i:2"><span class="encaixa">Venenosinha</span></li>
+    </ul>
+    <p class="apelidos-nota">Três nomes pra mesma pimenta. Escolha o seu.</p>
+  </section>
+
+  <!-- 3. a história -->
+  <section class="historia" id="historia" aria-labelledby="historia-titulo">
+    <span class="nome-fundo" id="nomeFundo" aria-hidden="true">O Tal do Du</span>
+    <img class="du" src="assets/du-corpo.png" alt="Eduardo de Lima Martins, o Tal do Du" width="662" height="1616">
+    <div class="historia-texto">
+      <h2 class="abre" id="historia-titulo" style="--i:0">O Tal do Du</h2>
+      <p style="--i:1">Eduardo de Lima Martins, mais conhecido como O Tal do Du, conquistou seu público mostrando onde comer em São Paulo. Nos vídeos, ele visita restaurantes, prova os pratos e compartilha suas impressões com o humor de quem tá indicando um lugar pra um amigo.</p>
+      <p style="--i:2">Entre uma garfada e outra, uma pergunta sobre a pimenta virou bordão: “Tem a caseirinha da casa?” A frase ganhou vida nas redes e virou parte da identidade do Du. Quem chega pelo meme encontra o que já fazia o público voltar: comida, dicas de lugares pra conhecer e o jeito descontraído dele de contar como foi a visita.</p>
+    </div>
+  </section>
+
+  <!-- 4. gastronomia -->
+  <section class="gastronomia" id="gastronomia" aria-labelledby="gastronomia-titulo">
+    <div class="gastronomia-titulo">
+      <h2 id="gastronomia-titulo">Explorando a Gastronomia em São Paulo</h2>
+    </div>
+    <div class="fotos">
+      <figure class="foto" style="--x:6%;--y:7%;--w:17vw" data-v="-.18">
+        <figcaption>Bife ancho</figcaption>
+        <div class="quadro"><img src="assets/comida/bife-ancho.jpg" alt="O Du cortando um bife ancho" width="820" height="1033" loading="lazy"></div>
+      </figure>
+      <figure class="foto" style="--x:71%;--y:10%;--w:19vw" data-v=".12">
+        <figcaption>Hambúrguer com pimenta no conta-gotas</figcaption>
+        <div class="quadro"><img src="assets/comida/burger.jpg" alt="O Du pingando pimenta num hambúrguer" width="820" height="1066" loading="lazy"></div>
+      </figure>
+      <figure class="foto" style="--x:40%;--y:22%;--w:14vw" data-v="-.3">
+        <figcaption>Peixe com camarão</figcaption>
+        <div class="quadro"><img src="assets/comida/peixe-camarao.jpg" alt="O Du mostrando um prato de peixe com camarão e batatas" width="820" height="1084" loading="lazy"></div>
+      </figure>
+      <figure class="foto" style="--x:13%;--y:37%;--w:14vw" data-v=".2">
+        <figcaption>Petiscos empanados</figcaption>
+        <div class="quadro"><img src="assets/comida/petiscos.jpg" alt="O Du provando um petisco empanado" width="820" height="1126" loading="lazy"></div>
+      </figure>
+      <figure class="foto" style="--x:76%;--y:43%;--w:15vw" data-v="-.14">
+        <figcaption>Bolo de chocolate</figcaption>
+        <div class="quadro"><img src="assets/comida/bolo-chocolate.jpg" alt="O Du com um bolo de chocolate" width="820" height="1089" loading="lazy"></div>
+      </figure>
+      <figure class="foto" style="--x:50%;--y:57%;--w:17vw" data-v=".24">
+        <figcaption>Contrafilé com ovo e farofa</figcaption>
+        <div class="quadro"><img src="assets/comida/contrafile-ovo.jpg" alt="O Du comendo contrafilé com ovo e farofa" width="820" height="1143" loading="lazy"></div>
+      </figure>
+      <figure class="foto" style="--x:5%;--y:66%;--w:18vw" data-v="-.22">
+        <figcaption>Bife com farofa</figcaption>
+        <div class="quadro"><img src="assets/comida/bife-farofa.jpg" alt="O Du segurando um copo de pimenta na frente de um bife com farofa" width="820" height="1263" loading="lazy"></div>
+      </figure>
+      <figure class="foto" style="--x:66%;--y:80%;--w:17vw" data-v=".1">
+        <figcaption>Arroz com carnes</figcaption>
+        <div class="quadro"><img src="assets/comida/arroz-carnes.jpg" alt="O Du servindo arroz com carnes" width="820" height="923" loading="lazy"></div>
+      </figure>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(() => {
+  const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- palavras da seção 2: cada uma ocupa a largura toda ---------- */
+  const encaixar = () => {
+    const caixa = document.querySelector('.palavras');
+    if (!caixa) return;
+    const largura = caixa.clientWidth;
+    document.querySelectorAll('.encaixa').forEach(el => {
+      el.style.fontSize = '100px';
+      const w = el.scrollWidth || 1;
+      el.style.fontSize = (100 * largura / w) + 'px';
+    });
+  };
+
+  /* ---------- tela de carregamento ---------- */
+  const tela = document.getElementById('carregando');
+  const pimenta = document.getElementById('pimentaCarga');
+  const contador = document.getElementById('contador');
+  const imgs = [...document.querySelectorAll('.hero img, .du')];
+  let prontas = 0;
+  const total = imgs.length + 1; // +1 para as fontes
+  const marca = () => { prontas++; };
+  imgs.forEach(img => {
+    if (img.complete) marca();
+    else { img.addEventListener('load', marca, { once: true }); img.addEventListener('error', marca, { once: true }); }
+  });
+  let fontesOk = false;
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { fontesOk = true; marca(); encaixar(); });
+
+  const inicio = performance.now();
+  const MINIMO = semMovimento ? 0 : 1800;
+  let mostrado = 0;
+
+  const abrir = () => {
+    contador.textContent = '100';
+    pimenta.style.setProperty('--p', '100%');
+    setTimeout(() => {
+      tela.classList.add('saindo');
+      document.body.classList.remove('travado');
+      document.body.classList.add('aberto');
+      setTimeout(() => {
+        tela.classList.add('foi');
+        document.getElementById('hero').classList.add('livre');
+      }, 2200);
+    }, semMovimento ? 0 : 350);
+  };
+
+  let abriu = false, ultimo = inicio;
+  const abrirUmaVez = () => { if (abriu) return; abriu = true; abrir(); };
+  const passo = (agora) => {
+    if (abriu) return;
+    const dt = Math.min(100, agora - ultimo); ultimo = agora;
+    const real = Math.max(prontas, imgs.filter(i => i.complete).length + (fontesOk ? 1 : 0)) / total;
+    const tempo = Math.min(1, (agora - inicio) / Math.max(MINIMO, 1));
+    const alvo = Math.min(real, tempo);
+    mostrado += (alvo - mostrado) * (1 - Math.exp(-dt / 110));
+    if (alvo >= 1 && mostrado > 0.97) mostrado = 1;
+    const p = Math.round(mostrado * 100);
+    contador.textContent = p;
+    pimenta.style.setProperty('--p', p + '%');
+    if (mostrado >= 1) abrirUmaVez();
+    else requestAnimationFrame(passo);
+  };
+  requestAnimationFrame(passo);
+  // se alguma coisa travar, abre assim mesmo
+  setTimeout(abrirUmaVez, 6000);
+
+  /* ---------- revela as seções quando entram na tela ---------- */
+  const observa = new IntersectionObserver((entradas) => {
+    entradas.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visto'); observa.unobserve(e.target); }
+    });
+  }, { threshold: 0.18 });
+  document.querySelectorAll('.apelidos, .historia').forEach(el => observa.observe(el));
+
+  const observaFoto = new IntersectionObserver((entradas) => {
+    entradas.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visto'); observaFoto.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('.foto').forEach(el => observaFoto.observe(el));
+
+  /* ---------- rolagem: fotos em velocidades diferentes e o nome deslizando ---------- */
+  const fotos = [...document.querySelectorAll('.foto')];
+  const nome = document.getElementById('nomeFundo');
+  const historia = document.getElementById('historia');
+  let agendado = false;
+  const rolar = () => {
+    agendado = false;
+    const vh = innerHeight;
+    fotos.forEach(f => {
+      const r = f.getBoundingClientRect();
+      const meio = r.top + r.height / 2 - vh / 2;
+      f.style.setProperty('--py', (meio * parseFloat(f.dataset.v || 0)).toFixed(1) + 'px');
+    });
+    const h = historia.getBoundingClientRect();
+    const prog = (vh - h.top) / (vh + h.height); // 0 a 1 enquanto a seção passa
+    nome.style.setProperty('--x', (-prog * nome.offsetWidth * 0.35 + innerWidth * 0.05).toFixed(1) + 'px');
+  };
+  if (!semMovimento) {
+    addEventListener('scroll', () => { if (!agendado) { agendado = true; requestAnimationFrame(rolar); } }, { passive: true });
+    rolar();
+  }
+
+  let espera;
+  addEventListener('resize', () => {
+    clearTimeout(espera);
+    espera = setTimeout(() => { encaixar(); if (!semMovimento) rolar(); }, 120);
+  });
+  encaixar();
+})();
+</script>
 </body>
 </html>

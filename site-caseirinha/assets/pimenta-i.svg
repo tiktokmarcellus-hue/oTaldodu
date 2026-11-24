@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 240" role="img" aria-label="Pimenta">
+  <defs>
+    <linearGradient id="corpo" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f24634"/>
+      <stop offset=".45" stop-color="#d9261a"/>
+      <stop offset="1" stop-color="#9a0e0a"/>
+    </linearGradient>
+    <linearGradient id="folha" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5cbf3f"/>
+      <stop offset="1" stop-color="#2c7a22"/>
+    </linearGradient>
+    <linearGradient id="talo" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#2f7d24"/>
+      <stop offset="1" stop-color="#5fb83d"/>
+    </linearGradient>
+    <clipPath id="recorte">
+      <path d="M40 62 C60 60 70 74 68 96 C66 130 60 168 48 200 C42 214 34 224 24 226 C17 227 13 221 17 216 C21 219 26 217 29 211 C38 186 40 150 32 118 C26 96 18 66 40 62 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- talo -->
+  <path d="M40 60 C39 41 44 25 56 12" fill="none" stroke="#173f12" stroke-width="12" stroke-linecap="round"/>
+  <path d="M40 60 C39 41 44 25 56 12" fill="none" stroke="url(#talo)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M42 44 C43 33 47 25 53 18" fill="none" stroke="#a8e07c" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+
+  <!-- corpo -->
+  <path d="M40 62 C60 60 70 74 68 96 C66 130 60 168 48 200 C42 214 34 224 24 226 C17 227 13 221 17 216 C21 219 26 217 29 211 C38 186 40 150 32 118 C26 96 18 66 40 62 Z" fill="url(#corpo)"/>
+  <g clip-path="url(#recorte)">
+    <!-- lado escuro (direita) -->
+    <path d="M70 92 C70 130 62 172 46 206 L80 240 L80 80 Z" fill="#7d0907" opacity=".55"/>
+    <path d="M62 96 C61 132 55 168 43 198 C52 168 56 134 56 100 Z" fill="#8a0a08" opacity=".35"/>
+    <!-- luz suave (esquerda) -->
+    <path d="M27 92 C33 120 36 152 32 186 C28 152 27 120 22 96 Z" fill="#ff8a72" opacity=".45"/>
+  </g>
+  <!-- contorno -->
+  <path d="M40 62 C60 60 70 74 68 96 C66 130 60 168 48 200 C42 214 34 224 24 226 C17 227 13 221 17 216 C21 219 26 217 29 211 C38 186 40 150 32 118 C26 96 18 66 40 62 Z"
+        fill="none" stroke="#5e0707" stroke-width="3" stroke-linejoin="round"/>
+  <!-- reflexos -->
+  <ellipse cx="31" cy="88" rx="4.5" ry="10" transform="rotate(-14 31 88)" fill="#fff" opacity=".92"/>
+  <circle cx="34" cy="106" r="2.4" fill="#fff" opacity=".8"/>
+  <path d="M33 124 C36 142 37 158 35 176" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+  <path d="M25 214 C22 217 20 218 19 218" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".55"/>
+
+  <!-- cálice (folhinhas caindo sobre o ombro) -->
+  <path d="M17 71 C21 60 30 55 40 55 C50 55 59 60 63 71 C57 68 53 70 51 77 C48 72 45 72 43 81 C40 75 36 73 33 79 C32 72 28 70 24 75 C23 71 20 70 17 71 Z"
+        fill="url(#folha)" stroke="#173f12" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M26 64 C31 60 38 58 46 59" fill="none" stroke="#b6ea8c" stroke-width="2" stroke-linecap="round" opacity=".85"/>
+</svg>

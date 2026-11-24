@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Pimenta">
+  <defs>
+    <linearGradient id="corpo" x1="30%" y1="10%" x2="75%" y2="95%">
+      <stop offset="0" stop-color="#ff5240"/>
+      <stop offset=".45" stop-color="#e3261b"/>
+      <stop offset="1" stop-color="#a50f14"/>
+    </linearGradient>
+    <linearGradient id="talo" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#3d8f25"/>
+      <stop offset="1" stop-color="#6cc040"/>
+    </linearGradient>
+  </defs>
+
+  <!-- talo -->
+  <path d="M134 60 C136 40 148 27 167 20" fill="none" stroke="#1d4f12" stroke-width="15" stroke-linecap="round"/>
+  <path d="M134 60 C136 40 148 27 167 20" fill="none" stroke="url(#talo)" stroke-width="9" stroke-linecap="round"/>
+  <path d="M139 44 C143 35 150 29 160 24" fill="none" stroke="#a6e07a" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+
+  <!-- corpo -->
+  <path d="M126 60 C150 56 168 76 162 106 C155 142 112 170 58 177 C40 179 24 176 18 168 C14 162 18 154 25 154 C27 158 30 161 36 162 C78 160 104 126 110 94 C113 78 114 63 126 60 Z"
+        fill="url(#corpo)" stroke="#6e080c" stroke-width="4" stroke-linejoin="round"/>
+  <!-- sombra interna na barriga -->
+  <path d="M158 112 C148 144 110 166 62 172 C96 160 132 140 158 112 Z" fill="#8c0b10" opacity=".45"/>
+  <!-- brilhos -->
+  <ellipse cx="122" cy="82" rx="7" ry="11" transform="rotate(28 122 82)" fill="#fff" opacity=".9"/>
+  <path d="M114 104 C108 128 90 148 66 158" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+  <circle cx="58" cy="161" r="2.6" fill="#fff" opacity=".7"/>
+
+  <!-- cálice (folhinhas) -->
+  <path d="M108 70 C114 56 128 50 142 52 C152 54 160 62 160 74 C153 69 147 69 143 72 C142 81 136 86 128 89 C129 81 126 75 119 74 C115 72 111 71 108 70 Z"
+        fill="#3f9a2b" stroke="#1d4f12" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M120 66 C126 60 134 58 142 60" fill="none" stroke="#8fd060" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
+</svg>
