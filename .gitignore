@@ -1,3 +1,5 @@
 .claude/
+.vercel/
+.env*.local
 Thumbs.db
 desktop.ini
