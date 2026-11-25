@@ -8,36 +8,41 @@
 <script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="design-system/tokens.css">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   html{-webkit-text-size-adjust:100%}
+  html.lenis,html.lenis body{height:auto}
+  .lenis.lenis-smooth{scroll-behavior:auto !important}
   body{
-    background:var(--verde-fundo);
+    background:var(--verde-noite);
     color:var(--texto);
     font-family:var(--fonte);
     font-size:var(--t-corpo);
     line-height:1.55;
-    overflow-x:hidden;
+    overflow-x:clip;
     -webkit-font-smoothing:antialiased;
   }
   img{display:block;max-width:100%}
   .js body.travado{overflow:hidden}
 
   /* =========================================================
-     TELA DE CARREGAMENTO: a pimenta enche de vermelho
+     TELA DE CARREGAMENTO
      ========================================================= */
   .carregando{
     position:fixed;inset:0;z-index:50;
     display:grid;place-items:center;
     background:var(--verde-fundo);
     color:var(--branco);
-    transition:transform 1s var(--sai);
+    clip-path:inset(0 0 0 0);
+    transition:clip-path 1.1s var(--sai);
   }
-  .carregando.saindo{transform:translateY(-100%)}
+  /* sai "fechando" de baixo pra cima, como o menu do Leveled */
+  .carregando.saindo{clip-path:inset(0 0 100% 0)}
   .carregando.foi{display:none}
-  .carregando-miolo{display:grid;justify-items:center;gap:var(--e3)}
+  .carregando-miolo{display:grid;justify-items:center;gap:var(--e3);transition:transform 1.1s var(--sai),opacity .5s ease}
+  .carregando.saindo .carregando-miolo{transform:translateY(-30vh);opacity:0}
   .pimenta-carga{
     position:relative;
     height:min(34vh,260px);
@@ -46,7 +51,6 @@
     transform-origin:50% 20%;
   }
   .pimenta-carga img{position:absolute;inset:0;width:100%;height:100%}
-  /* a de trás fica apagada, a da frente vai sendo revelada de baixo pra cima */
   .pimenta-carga .vazia{filter:grayscale(1) brightness(.55);opacity:.35}
   .pimenta-carga .cheia{clip-path:inset(calc(100% - var(--p,0%)) 0 0 0)}
   .contador{
@@ -57,49 +61,76 @@
     font-variant-numeric:tabular-nums;
     opacity:.8;
   }
-  @keyframes balanca{
-    0%,100%{transform:rotate(-4deg)}
-    50%{transform:rotate(4deg)}
+  @keyframes balanca{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+  /* =========================================================
+     PAINÉIS QUE SE SOBREPÕEM (Shopify Editions)
+     cada seção gruda no topo e a próxima desliza por cima
+     ========================================================= */
+  .painel{
+    position:sticky;
+    top:0;
+    min-height:100svh;
+    overflow:hidden;
+    transform-origin:50% 30%;
+  }
+  .painel + .painel{box-shadow:0 -30px 60px rgba(0,0,0,.25)}
+  .veu{
+    position:absolute;inset:0;
+    background:#000;
+    opacity:var(--veu,0);
+    pointer-events:none;
+    z-index:20;
   }
 
   /* =========================================================
-     1. HERO: o letreiro + o mascote com a Caseirinha
+     1. HERO EM 3D
      ========================================================= */
   .hero{
-    /* o mascote ocupa --m de largura; o letreiro (~4,6× a fonte) usa o resto */
     --m:min(34vw,62vh);
-    --f:min(calc((100vw - var(--m) - 140px) / 4.6), 28vh);
-    position:relative;
+    --f:min(calc((100vw - var(--m) - 200px) / 4.6), 28vh);
+    z-index:1;
+    display:grid;
+    place-items:center;
+    background:radial-gradient(75% 65% at 50% 45%, #0b5434 0%, var(--verde-fundo) 62%, var(--verde-noite) 100%);
+  }
+  .cena{
+    width:100%;
     min-height:100svh;
     display:grid;
     place-items:center;
     padding:var(--e5) var(--e2) var(--e4);
-    overflow:hidden;
-    background:radial-gradient(75% 65% at 50% 45%, #0b5434 0%, var(--verde-fundo) 62%, var(--verde-noite) 100%);
+    perspective:1100px;
+    perspective-origin:50% 45%;
   }
   .palco{
+    position:relative;
     display:flex;
     align-items:center;
     justify-content:center;
     gap:clamp(0px,2vw,40px);
     width:100%;
     max-width:1500px;
+    transform-style:preserve-3d;
   }
+  /* luz atrás, bem mais "funda" que o resto */
+  .luz{
+    position:absolute;
+    left:50%;top:50%;
+    width:120%;aspect-ratio:2/1;
+    transform:translate3d(-50%,-50%,-260px);
+    background:radial-gradient(closest-side, rgba(28,140,82,.55), rgba(0,100,55,0) 70%);
+    pointer-events:none;
+  }
+  .camada-letreiro{transform:translateZ(20px);transform-style:preserve-3d}
+  .camada-mascote{transform:translateZ(110px);flex:none}
   .mascote{
     width:var(--m);
     height:auto;
-    flex:none;
-    filter:drop-shadow(0 30px 40px rgba(0,0,0,.35));
-  }
-  .hero-rodape{
-    position:absolute;left:var(--e3);right:var(--e3);bottom:var(--e3);
-    display:flex;justify-content:space-between;gap:var(--e2);
-    color:rgba(255,255,255,.7);
-    font-size:var(--t-mini);
-    line-height:1.3;
+    filter:drop-shadow(0 34px 40px rgba(0,0,0,.4));
   }
 
-  /* ---------- o letreiro (mesmo da versão anterior) ---------- */
+  /* ---------- o letreiro ---------- */
   h1.letreiro{
     font-family:var(--fonte-letreiro);
     font-weight:400;
@@ -108,7 +139,6 @@
     text-transform:uppercase;
     text-align:center;
     position:relative;
-    flex:none;
   }
   .linha{display:flex;justify-content:center;white-space:nowrap}
   .l2{font-size:.56em;margin-top:.02em}
@@ -126,21 +156,14 @@
   .l1 .ch{
     color:#5b0b07;
     text-shadow:
-      0 .012em 0 #4e0906,
-      0 .024em 0 #430805,
-      0 .036em 0 #380604,
-      0 .048em 0 #2d0503,
-      0 .06em .015em rgba(0,0,0,.6),
-      0 0 .06em rgba(255,240,220,.3);
+      0 .012em 0 #4e0906,0 .024em 0 #430805,0 .036em 0 #380604,0 .048em 0 #2d0503,
+      0 .06em .015em rgba(0,0,0,.6),0 0 .06em rgba(255,240,220,.3);
   }
   .l2 .ch{
     color:#3a0503;
     text-shadow:
-      0 .015em 0 #300402,
-      0 .03em 0 #260302,
-      0 .045em 0 #1c0201,
-      0 .06em .015em rgba(0,0,0,.6),
-      0 0 .07em rgba(255,60,40,.4);
+      0 .015em 0 #300402,0 .03em 0 #260302,0 .045em 0 #1c0201,
+      0 .06em .015em rgba(0,0,0,.6),0 0 .07em rgba(255,60,40,.4);
   }
   .ch[data-l]::after{
     content:attr(data-l);
@@ -150,12 +173,8 @@
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-stroke:.006em #5a0a06;
   }
-  .l1 .ch[data-l]::after{
-    background-image:linear-gradient(180deg,#ffffff 0%,#fff6e8 38%,#f3dcb6 50%,#fff8ec 62%,#ffeccc 100%);
-  }
-  .l2 .ch[data-l]::after{
-    background-image:linear-gradient(180deg,#ff8a73 0%,#ff4a3a 36%,#c8170f 50%,#ff5a47 64%,#e3261b 100%);
-  }
+  .l1 .ch[data-l]::after{background-image:linear-gradient(180deg,#fff 0%,#fff6e8 38%,#f3dcb6 50%,#fff8ec 62%,#ffeccc 100%)}
+  .l2 .ch[data-l]::after{background-image:linear-gradient(180deg,#ff8a73 0%,#ff4a3a 36%,#c8170f 50%,#ff5a47 64%,#e3261b 100%)}
   .ch.pimenta{width:.32em;height:.86em;vertical-align:baseline}
   .ch.pimenta img{
     position:absolute;left:50%;bottom:-.04em;
@@ -177,161 +196,145 @@
     50%{transform:scale(1) rotate(45deg);opacity:1}
   }
 
-  /* ---------- entrada do hero (só depois da tela de carregamento) ---------- */
+  /* ---------- entrada do hero ---------- */
   .js .hero:not(.livre) .linha{clip-path:inset(-90% -8% -.1em -8%)}
   .js .sobe{transform:translateY(115%)}
-  .js .mascote{opacity:0;transform:translateY(14%) rotate(5deg)}
+  .js .mascote{opacity:0;transform:translateY(18%) rotate(6deg) scale(.92)}
   .js .brilho{visibility:hidden}
-  .js .hero-rodape{opacity:0}
-
-  .aberto .sobe{
-    transform:none;
-    transition:transform var(--t-revela) var(--sai) calc(.1s + var(--i) * .045s);
-  }
-  .aberto .mascote{
-    opacity:1;transform:none;
-    transition:transform 1.4s var(--sai) .55s, opacity .7s ease .55s;
-  }
+  .aberto .sobe{transform:none;transition:transform var(--t-revela) var(--sai) calc(.1s + var(--i) * .045s)}
+  .aberto .mascote{opacity:1;transform:none;transition:transform 1.5s var(--sai) .55s,opacity .7s ease .55s}
   .aberto .ch.pimenta img{animation:cai .9s var(--mola) .75s backwards}
   .aberto .brilho{visibility:visible}
-  .aberto .hero-rodape{opacity:1;transition:opacity .8s ease 1.2s}
   @keyframes cai{
     from{transform:translateX(-50%) translateY(-.8em) rotate(-25deg)}
     to{transform:translateX(-50%)}
   }
 
   /* =========================================================
-     2. OS APELIDOS: três palavras empilhadas, de ponta a ponta
+     2. OS APELIDOS EM FAIXAS CORRENDO (House of Honey + Shopify)
      ========================================================= */
   .apelidos{
+    z-index:2;
     background:var(--branco);
-    padding:var(--e6) var(--e3) var(--e5);
-    min-height:100svh;
     display:flex;
     flex-direction:column;
     justify-content:center;
+    gap:1.5svh;
+    padding:var(--e5) 0;
   }
-  .palavras{list-style:none}
-  .palavra{
-    display:block;
+  .faixa{
     overflow:hidden;
     font-stretch:var(--largo);
     font-weight:900;
     text-transform:uppercase;
-    line-height:.84;
+    font-size:min(22svh,15vw);
+    line-height:.86;
     letter-spacing:-.01em;
     white-space:nowrap;
-    padding-top:.04em;
+    padding-top:.05em;
   }
-  .palavra span{display:block;width:max-content}
-  .palavra:nth-child(1){color:var(--vermelho)}
-  .palavra:nth-child(2){color:var(--verde)}
-  .palavra:nth-child(3){color:var(--vermelho)}
-  .apelidos-nota{
-    margin-top:var(--e4);
-    align-self:flex-end;
-    max-width:24ch;
-    font-size:var(--t-corpo);
-    line-height:1.35;
-    color:var(--texto);
-  }
-  .js .palavra span{transform:translateY(105%)}
-  .js .apelidos-nota{opacity:0;transform:translateY(16px)}
-  .apelidos.visto .palavra span{
-    transform:none;
-    transition:transform 1.2s var(--sai) calc(var(--i) * .12s);
-  }
-  .apelidos.visto .apelidos-nota{
-    opacity:1;transform:none;
-    transition:opacity .8s ease .5s, transform 1s var(--sai) .5s;
-  }
+  .faixa:nth-child(1){color:var(--vermelho)}
+  .faixa:nth-child(2){color:var(--verde)}
+  .faixa:nth-child(3){color:var(--vermelho)}
+  .trilho{display:flex;width:max-content;will-change:transform}
+  .trilho span{display:flex;align-items:center}
+  .trilho img{height:.62em;width:auto;margin:0 .22em;transform:rotate(18deg)}
+  .faixa:nth-child(2) .trilho img{transform:rotate(-18deg)}
+  .js .faixa .entra{transform:translateY(108%)}
+  .faixa .entra{display:block}
+  .apelidos.visto .faixa .entra{transform:none;transition:transform 1.3s var(--sai) calc(var(--i) * .13s)}
 
   /* =========================================================
-     3. A HISTÓRIA: o Du recortado + o texto
+     3. A HISTÓRIA
      ========================================================= */
   .historia{
-    position:relative;
+    z-index:3;
     background:var(--vermelho-fundo);
     color:var(--branco);
-    overflow:hidden;
-    min-height:100svh;
     display:grid;
-    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);
     align-items:end;
-    padding:0 var(--e3);
     column-gap:var(--e4);
+    padding:0 clamp(16px,4vw,64px);
   }
-  /* o nome gigante vazando por trás */
   .nome-fundo{
     position:absolute;
     left:0;top:50%;
-    transform:translate3d(var(--x,0px),-50%,0);
+    transform:translateY(-50%);
     font-stretch:var(--largo);
     font-weight:900;
-    font-size:min(30vw,52vh);
+    font-size:min(30vw,50vh);
     line-height:.8;
     text-transform:uppercase;
     white-space:nowrap;
     color:var(--vermelho-sombra);
     pointer-events:none;
     user-select:none;
-    will-change:transform;
   }
-  .du{
+  .nome-fundo .trilho span{padding-right:.35em}
+  .busto-caixa{
     position:relative;
     z-index:1;
-    justify-self:center;
     align-self:end;
-    height:min(92svh,1000px);
-    width:auto;
-    max-width:none;
+    justify-self:center;
+    width:min(100%,46vw,82svh);
   }
+  .busto{width:100%;height:auto;transform:translate3d(0,var(--by,0px),0) rotate(var(--br,0deg));transform-origin:50% 100%}
   .historia-texto{
     position:relative;
     z-index:1;
     align-self:center;
-    max-width:34rem;
     padding:var(--e5) 0;
+    font-family:'Bricolage Grotesque',var(--fonte);
+    font-optical-sizing:auto;
   }
-  .historia-texto p + p{margin-top:var(--e3)}
-  .historia-texto .abre{
-    font-size:var(--t-intro);
-    font-weight:500;
-    line-height:1.12;
-    letter-spacing:-.015em;
+  .historia-texto h2{
+    font-weight:800;
+    font-size:clamp(3.5rem,2rem + 6vw,8rem);
+    line-height:.9;
+    letter-spacing:-.035em;
     margin-bottom:var(--e4);
   }
-  .js .du{opacity:0;transform:translateY(12%)}
-  .js .historia-texto > *{opacity:0;transform:translateY(24px)}
-  .historia.visto .du{
-    opacity:1;transform:none;
-    transition:transform 1.4s var(--sai), opacity .8s ease;
+  .historia-texto p{
+    font-weight:400;
+    font-size:clamp(1.2rem,.9rem + .9vw,1.75rem);
+    line-height:1.32;
+    letter-spacing:-.01em;
+    max-width:30em;
   }
-  .historia.visto .historia-texto > *{
-    opacity:1;transform:none;
-    transition:opacity .8s ease calc(.25s + var(--i) * .12s), transform 1.1s var(--sai) calc(.25s + var(--i) * .12s);
-  }
+  .historia-texto p + p{margin-top:var(--e3)}
+  /* palavras sobem uma a uma */
+  .pm{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+  .pm > span{display:inline-block}
+  .js .pm > span{transform:translateY(110%)}
+  .historia.visto .pm > span{transform:none;transition:transform 1s var(--sai) calc(var(--i) * 12ms)}
+  /* o busto aparece com o corte do Leveled */
+  .js .busto-caixa{clip-path:inset(20% 0 0 0);opacity:0}
+  .historia.visto .busto-caixa{clip-path:inset(-20% -20% 0 -20%);opacity:1;transition:clip-path 1.5s cubic-bezier(.55,0,.1,1),opacity 1s ease}
 
   /* =========================================================
-     4. GASTRONOMIA: fotos espalhadas aparecendo no scroll
+     4. GASTRONOMIA
      ========================================================= */
   .gastronomia{
     position:relative;
+    z-index:4;
     background:var(--branco);
-    height:360svh;
+    height:330svh;
+    box-shadow:0 -30px 60px rgba(0,0,0,.25);
   }
   .gastronomia-titulo{
     position:sticky;
     top:0;
     height:100svh;
-    display:grid;
-    place-items:center;
-    padding:0 var(--e3);
-    z-index:2;
+    margin-bottom:-100svh;
+    display:flex;
+    justify-content:center;
+    padding:13svh var(--e3) 0;
+    z-index:3;
     pointer-events:none;
   }
   .gastronomia-titulo h2{
-    max-width:13ch;
+    max-width:14ch;
     text-align:center;
     font-stretch:var(--largo);
     font-weight:850;
@@ -339,64 +342,69 @@
     line-height:.92;
     letter-spacing:-.02em;
     color:var(--verde);
+    opacity:var(--o,1);
+    transform:translate3d(0,var(--ty,0px),0) scale(var(--s,1));
+    filter:blur(var(--b,0px));
   }
-  .fotos{position:absolute;inset:0;z-index:1}
+  .fotos{position:absolute;inset:0;z-index:2}
   .foto{
     position:absolute;
     left:var(--x);top:var(--y);
     width:var(--w);
-    transform:translate3d(0,var(--py,0px),0);
-    will-change:transform;
+    transform:translate3d(0,var(--py,0px),0) scale(var(--sai-s,1));
+    opacity:var(--sai-o,1);
   }
-  .foto figcaption{
-    font-size:var(--t-mini);
-    line-height:1.2;
-    color:var(--texto);
-    margin-bottom:6px;
+  .foto .quadro{
+    overflow:hidden;
+    aspect-ratio:4/5;
+    background:#e9ece8;
   }
-  .foto .quadro{overflow:hidden}
-  .foto img{width:100%;height:auto}
-  .js .foto .quadro{clip-path:inset(100% 0 0 0)}
-  .js .foto img{transform:scale(1.18)}
-  .js .foto figcaption{opacity:0}
-  .foto.visto .quadro{clip-path:inset(0 0 0 0);transition:clip-path 1.3s var(--sai)}
-  .foto.visto img{transform:none;transition:transform 1.6s var(--sai)}
-  .foto.visto figcaption{opacity:1;transition:opacity .6s ease .5s}
+  .foto .zoom{width:100%;height:100%;transition:transform .9s var(--sai)}
+  .foto img{
+    width:100%;
+    height:118%;
+    object-fit:cover;
+    transform:translate3d(0,var(--ip,-9%),0);
+  }
+  @media (hover:hover){.foto:hover .zoom{transform:scale(1.07)}}
+  /* revelação do Leveled: corte de 20% + opacidade, e a foto chega levemente torta */
+  .js .foto .quadro{clip-path:inset(20% 0 0 0);opacity:0;transform:rotate(var(--r,0deg)) scale(.94)}
+  .foto.visto .quadro{
+    clip-path:inset(0 0 0 0);opacity:1;transform:none;
+    transition:clip-path 1.5s cubic-bezier(.55,0,.1,1),opacity 1s ease,transform 1.5s var(--sai);
+  }
 
   /* ---------- telas menores ---------- */
   @media (max-width:900px){
-    .hero{--m:min(78vw,44svh);--f:calc((100vw - 40px) / 4.6);padding-top:var(--e6)}
+    .hero{--m:min(78vw,44svh);--f:calc((100vw - 40px) / 4.6)}
+    .cena{padding-top:var(--e6)}
     .palco{flex-direction:column;gap:var(--e3)}
-    .hero-rodape{left:var(--e2);right:var(--e2);bottom:var(--e2)}
+    .camada-mascote{transform:translateZ(70px)}
 
-    .apelidos{padding:var(--e6) var(--e2);min-height:auto}
+    .faixa{font-size:min(16svh,26vw)}
 
     .historia{grid-template-columns:1fr;padding:0 var(--e2)}
     .historia-texto{order:-1;padding:var(--e5) 0 var(--e3)}
-    .du{height:min(78svh,720px)}
-    .nome-fundo{top:auto;bottom:8%;transform:translate3d(var(--x,0px),0,0);font-size:44vw}
+    .busto-caixa{width:min(92vw,62svh)}
+    .nome-fundo{top:auto;bottom:6%;transform:none;font-size:42vw}
 
-    .gastronomia{height:440svh}
+    .gastronomia{height:420svh}
     .gastronomia-titulo h2{font-size:10.6vw;font-stretch:112%}
-    .foto{width:calc(var(--w) * 2.3)}
-    .foto:nth-child(odd){left:4%}
-    .foto:nth-child(even){left:auto;right:4%}
+    .foto{width:calc(var(--w) * 2.4)}
+    .foto:nth-child(odd){left:5%}
+    .foto:nth-child(even){left:auto;right:5%}
   }
 
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation:none !important;transition:none !important}
-    .js .sobe,.js .mascote,.js .palavra span,.js .apelidos-nota,
-    .js .du,.js .historia-texto > *,.js .foto img{transform:none;opacity:1}
-    .js .hero-rodape,.js .foto figcaption{opacity:1}
+    .js .sobe,.js .mascote,.js .faixa .entra,.js .pm > span,.js .foto .quadro{transform:none;opacity:1}
     .js .brilho{visibility:visible}
-    .js .foto .quadro,.js .hero .linha{clip-path:none}
-    .foto,.nome-fundo{transform:none}
+    .js .foto .quadro,.js .busto-caixa,.js .hero .linha{clip-path:none;opacity:1}
   }
 </style>
 </head>
 <body class="travado">
 
-<!-- tela de carregamento -->
 <div class="carregando" id="carregando" aria-hidden="true">
   <div class="carregando-miolo">
     <div class="pimenta-carga" id="pimentaCarga">
@@ -410,63 +418,68 @@
 <main>
 
   <!-- 1. hero -->
-  <section class="hero" id="hero">
-    <div class="palco">
-      <h1 class="letreiro" aria-label="Caseirinha da Casa">
-        <span class="linha l1" aria-hidden="true">
-          <span class="sobe" style="--i:0"><span class="ch" data-l="C" style="--t:-1">C</span></span>
-          <span class="sobe" style="--i:1"><span class="ch" data-l="A" style="--t:-.778">A</span></span>
-          <span class="sobe" style="--i:2"><span class="ch" data-l="S" style="--t:-.556">S</span></span>
-          <span class="sobe" style="--i:3"><span class="ch" data-l="E" style="--t:-.333">E</span></span>
-          <span class="sobe" style="--i:4"><span class="ch pimenta" style="--t:-.111"><img src="assets/pimenta-i.svg" alt=""></span></span>
-          <span class="sobe" style="--i:5"><span class="ch" data-l="R" style="--t:.111">R</span></span>
-          <span class="sobe" style="--i:6"><span class="ch" data-l="I" style="--t:.333">I</span></span>
-          <span class="sobe" style="--i:7"><span class="ch" data-l="N" style="--t:.556">N</span></span>
-          <span class="sobe" style="--i:8"><span class="ch" data-l="H" style="--t:.778">H</span></span>
-          <span class="sobe" style="--i:9"><span class="ch" data-l="A" style="--t:1">A</span></span>
-        </span>
-        <span class="linha l2" aria-hidden="true">
-          <span class="sobe" style="--i:5"><span class="ch" data-l="D" style="--t:-1">D</span></span>
-          <span class="sobe" style="--i:6"><span class="ch" data-l="A" style="--t:-.667">A</span></span>
-          <span class="sobe" style="--i:7"><span class="ch" style="--t:-.333">&nbsp;</span></span>
-          <span class="sobe" style="--i:8"><span class="ch" data-l="C" style="--t:0">C</span></span>
-          <span class="sobe" style="--i:9"><span class="ch" data-l="A" style="--t:.333">A</span></span>
-          <span class="sobe" style="--i:10"><span class="ch" data-l="S" style="--t:.667">S</span></span>
-          <span class="sobe" style="--i:11"><span class="ch" data-l="A" style="--t:1">A</span></span>
-        </span>
-        <i class="brilho" aria-hidden="true" style="left:-1%;top:14%"></i>
-        <i class="brilho" aria-hidden="true" style="left:57%;top:4%;--d:.9s"></i>
-        <i class="brilho" aria-hidden="true" style="left:96%;top:56%;--d:1.7s"></i>
-        <i class="brilho" aria-hidden="true" style="left:26%;top:84%;--d:2.2s"></i>
-        <i class="brilho" aria-hidden="true" style="left:69%;top:66%;--d:.4s"></i>
-      </h1>
-      <img class="mascote" src="assets/mascote.png" alt="O mascote do Tal do Du segurando a garrafa da Caseirinha da Casa" width="900" height="900">
+  <section class="painel hero" id="hero">
+    <div class="cena">
+      <div class="palco" id="palco">
+        <div class="luz" aria-hidden="true"></div>
+        <div class="camada-letreiro">
+          <h1 class="letreiro" aria-label="Caseirinha da Casa">
+            <span class="linha l1" aria-hidden="true">
+              <span class="sobe" style="--i:0"><span class="ch" data-l="C" style="--t:-1">C</span></span>
+              <span class="sobe" style="--i:1"><span class="ch" data-l="A" style="--t:-.778">A</span></span>
+              <span class="sobe" style="--i:2"><span class="ch" data-l="S" style="--t:-.556">S</span></span>
+              <span class="sobe" style="--i:3"><span class="ch" data-l="E" style="--t:-.333">E</span></span>
+              <span class="sobe" style="--i:4"><span class="ch pimenta" style="--t:-.111"><img src="assets/pimenta-i.svg" alt=""></span></span>
+              <span class="sobe" style="--i:5"><span class="ch" data-l="R" style="--t:.111">R</span></span>
+              <span class="sobe" style="--i:6"><span class="ch" data-l="I" style="--t:.333">I</span></span>
+              <span class="sobe" style="--i:7"><span class="ch" data-l="N" style="--t:.556">N</span></span>
+              <span class="sobe" style="--i:8"><span class="ch" data-l="H" style="--t:.778">H</span></span>
+              <span class="sobe" style="--i:9"><span class="ch" data-l="A" style="--t:1">A</span></span>
+            </span>
+            <span class="linha l2" aria-hidden="true">
+              <span class="sobe" style="--i:5"><span class="ch" data-l="D" style="--t:-1">D</span></span>
+              <span class="sobe" style="--i:6"><span class="ch" data-l="A" style="--t:-.667">A</span></span>
+              <span class="sobe" style="--i:7"><span class="ch" style="--t:-.333">&nbsp;</span></span>
+              <span class="sobe" style="--i:8"><span class="ch" data-l="C" style="--t:0">C</span></span>
+              <span class="sobe" style="--i:9"><span class="ch" data-l="A" style="--t:.333">A</span></span>
+              <span class="sobe" style="--i:10"><span class="ch" data-l="S" style="--t:.667">S</span></span>
+              <span class="sobe" style="--i:11"><span class="ch" data-l="A" style="--t:1">A</span></span>
+            </span>
+            <i class="brilho" aria-hidden="true" style="left:-1%;top:14%"></i>
+            <i class="brilho" aria-hidden="true" style="left:57%;top:4%;--d:.9s"></i>
+            <i class="brilho" aria-hidden="true" style="left:96%;top:56%;--d:1.7s"></i>
+            <i class="brilho" aria-hidden="true" style="left:26%;top:84%;--d:2.2s"></i>
+            <i class="brilho" aria-hidden="true" style="left:69%;top:66%;--d:.4s"></i>
+          </h1>
+        </div>
+        <div class="camada-mascote">
+          <img class="mascote" src="assets/mascote.webp" alt="O mascote do Tal do Du segurando a garrafa da Caseirinha da Casa" width="1100" height="1201">
+        </div>
+      </div>
     </div>
-    <div class="hero-rodape">
-      <span>A pimenta do Tal do Du</span>
-      <span>São Paulo</span>
-    </div>
+    <div class="veu" aria-hidden="true"></div>
   </section>
 
   <!-- 2. os apelidos -->
-  <section class="apelidos" id="apelidos" aria-label="Os apelidos da pimenta">
-    <ul class="palavras">
-      <li class="palavra" style="--i:0"><span class="encaixa">Caseirinha</span></li>
-      <li class="palavra" style="--i:1"><span class="encaixa">Mal criadinha</span></li>
-      <li class="palavra" style="--i:2"><span class="encaixa">Venenosinha</span></li>
-    </ul>
-    <p class="apelidos-nota">Três nomes pra mesma pimenta. Escolha o seu.</p>
+  <section class="painel apelidos" id="apelidos" aria-label="Caseirinha, Mal criadinha, Venenosinha">
+    <div class="faixa" style="--i:0"><div class="entra"><div class="trilho" data-dir="-1"><span>Caseirinha<img src="assets/pimenta-i.svg" alt=""></span></div></div></div>
+    <div class="faixa" style="--i:1"><div class="entra"><div class="trilho" data-dir="1"><span>Mal criadinha<img src="assets/pimenta-i.svg" alt=""></span></div></div></div>
+    <div class="faixa" style="--i:2"><div class="entra"><div class="trilho" data-dir="-1"><span>Venenosinha<img src="assets/pimenta-i.svg" alt=""></span></div></div></div>
+    <div class="veu" aria-hidden="true"></div>
   </section>
 
   <!-- 3. a história -->
-  <section class="historia" id="historia" aria-labelledby="historia-titulo">
-    <span class="nome-fundo" id="nomeFundo" aria-hidden="true">O Tal do Du</span>
-    <img class="du" src="assets/du-corpo.png" alt="Eduardo de Lima Martins, o Tal do Du" width="662" height="1616">
-    <div class="historia-texto">
-      <h2 class="abre" id="historia-titulo" style="--i:0">O Tal do Du</h2>
-      <p style="--i:1">Eduardo de Lima Martins, mais conhecido como O Tal do Du, conquistou seu público mostrando onde comer em São Paulo. Nos vídeos, ele visita restaurantes, prova os pratos e compartilha suas impressões com o humor de quem tá indicando um lugar pra um amigo.</p>
-      <p style="--i:2">Entre uma garfada e outra, uma pergunta sobre a pimenta virou bordão: “Tem a caseirinha da casa?” A frase ganhou vida nas redes e virou parte da identidade do Du. Quem chega pelo meme encontra o que já fazia o público voltar: comida, dicas de lugares pra conhecer e o jeito descontraído dele de contar como foi a visita.</p>
+  <section class="painel historia" id="historia" aria-labelledby="historia-titulo">
+    <div class="nome-fundo" aria-hidden="true"><div class="trilho" data-dir="-1" data-vel=".5"><span>O Tal do Du</span></div></div>
+    <div class="busto-caixa">
+      <img class="busto" id="busto" src="assets/mascote-busto.webp" alt="O mascote do Tal do Du, de boné verde, sorrindo" width="1200" height="1301">
     </div>
+    <div class="historia-texto">
+      <h2 id="historia-titulo" class="divide">O Tal do Du</h2>
+      <p class="divide">Eduardo de Lima Martins, mais conhecido como O Tal do Du, conquistou seu público mostrando onde comer em São Paulo. Nos vídeos, ele visita restaurantes, prova os pratos e compartilha suas impressões com o humor de quem tá indicando um lugar pra um amigo.</p>
+      <p class="divide">Entre uma garfada e outra, uma pergunta sobre a pimenta virou bordão: “Tem a caseirinha da casa?” A frase ganhou vida nas redes e virou parte da identidade do Du. Quem chega pelo meme encontra o que já fazia o público voltar: comida, dicas de lugares pra conhecer e o jeito descontraído dele de contar como foi a visita.</p>
+    </div>
+    <div class="veu" aria-hidden="true"></div>
   </section>
 
   <!-- 4. gastronomia -->
@@ -475,155 +488,222 @@
       <h2 id="gastronomia-titulo">Explorando a Gastronomia em São Paulo</h2>
     </div>
     <div class="fotos">
-      <figure class="foto" style="--x:6%;--y:7%;--w:17vw" data-v="-.18">
-        <figcaption>Bife ancho</figcaption>
-        <div class="quadro"><img src="assets/comida/bife-ancho.jpg" alt="O Du cortando um bife ancho" width="820" height="1033" loading="lazy"></div>
-      </figure>
-      <figure class="foto" style="--x:71%;--y:10%;--w:19vw" data-v=".12">
-        <figcaption>Hambúrguer com pimenta no conta-gotas</figcaption>
-        <div class="quadro"><img src="assets/comida/burger.jpg" alt="O Du pingando pimenta num hambúrguer" width="820" height="1066" loading="lazy"></div>
-      </figure>
-      <figure class="foto" style="--x:40%;--y:22%;--w:14vw" data-v="-.3">
-        <figcaption>Peixe com camarão</figcaption>
-        <div class="quadro"><img src="assets/comida/peixe-camarao.jpg" alt="O Du mostrando um prato de peixe com camarão e batatas" width="820" height="1084" loading="lazy"></div>
-      </figure>
-      <figure class="foto" style="--x:13%;--y:37%;--w:14vw" data-v=".2">
-        <figcaption>Petiscos empanados</figcaption>
-        <div class="quadro"><img src="assets/comida/petiscos.jpg" alt="O Du provando um petisco empanado" width="820" height="1126" loading="lazy"></div>
-      </figure>
-      <figure class="foto" style="--x:76%;--y:43%;--w:15vw" data-v="-.14">
-        <figcaption>Bolo de chocolate</figcaption>
-        <div class="quadro"><img src="assets/comida/bolo-chocolate.jpg" alt="O Du com um bolo de chocolate" width="820" height="1089" loading="lazy"></div>
-      </figure>
-      <figure class="foto" style="--x:50%;--y:57%;--w:17vw" data-v=".24">
-        <figcaption>Contrafilé com ovo e farofa</figcaption>
-        <div class="quadro"><img src="assets/comida/contrafile-ovo.jpg" alt="O Du comendo contrafilé com ovo e farofa" width="820" height="1143" loading="lazy"></div>
-      </figure>
-      <figure class="foto" style="--x:5%;--y:66%;--w:18vw" data-v="-.22">
-        <figcaption>Bife com farofa</figcaption>
-        <div class="quadro"><img src="assets/comida/bife-farofa.jpg" alt="O Du segurando um copo de pimenta na frente de um bife com farofa" width="820" height="1263" loading="lazy"></div>
-      </figure>
-      <figure class="foto" style="--x:66%;--y:80%;--w:17vw" data-v=".1">
-        <figcaption>Arroz com carnes</figcaption>
-        <div class="quadro"><img src="assets/comida/arroz-carnes.jpg" alt="O Du servindo arroz com carnes" width="820" height="923" loading="lazy"></div>
-      </figure>
+      <figure class="foto" style="--x:5%;--y:6%;--w:17vw;--r:-5deg" data-v="-.16"><div class="quadro"><div class="zoom"><img src="assets/comida/bife-ancho.jpg" alt="O Du cortando um bife ancho" width="820" height="1033" loading="lazy"></div></div></figure>
+      <figure class="foto" style="--x:74%;--y:9%;--w:18vw;--r:4deg" data-v=".1"><div class="quadro"><div class="zoom"><img src="assets/comida/burger.jpg" alt="O Du pingando pimenta num hambúrguer" width="820" height="1066" loading="lazy"></div></div></figure>
+      <figure class="foto" style="--x:41%;--y:21%;--w:15vw;--r:-3deg" data-v="-.28"><div class="quadro"><div class="zoom"><img src="assets/comida/peixe-camarao.jpg" alt="O Du mostrando um prato de peixe com camarão e batatas" width="820" height="1084" loading="lazy"></div></div></figure>
+      <figure class="foto" style="--x:12%;--y:35%;--w:15vw;--r:5deg" data-v=".2"><div class="quadro"><div class="zoom"><img src="assets/comida/petiscos.jpg" alt="O Du provando um petisco empanado" width="820" height="1126" loading="lazy"></div></div></figure>
+      <figure class="foto" style="--x:75%;--y:42%;--w:16vw;--r:-4deg" data-v="-.12"><div class="quadro"><div class="zoom"><img src="assets/comida/bolo-chocolate.jpg" alt="O Du com um bolo de chocolate" width="820" height="1089" loading="lazy"></div></div></figure>
+      <figure class="foto" style="--x:48%;--y:55%;--w:18vw;--r:3deg" data-v=".22"><div class="quadro"><div class="zoom"><img src="assets/comida/contrafile-ovo.jpg" alt="O Du comendo contrafilé com ovo e farofa" width="820" height="1143" loading="lazy"></div></div></figure>
+      <figure class="foto" style="--x:6%;--y:65%;--w:18vw;--r:-4deg" data-v="-.2"><div class="quadro"><div class="zoom"><img src="assets/comida/bife-farofa.jpg" alt="O Du segurando um copo de pimenta na frente de um bife com farofa" width="820" height="1263" loading="lazy"></div></div></figure>
+      <figure class="foto" style="--x:68%;--y:78%;--w:17vw;--r:5deg" data-v=".1"><div class="quadro"><div class="zoom"><img src="assets/comida/arroz-carnes.jpg" alt="O Du servindo arroz com carnes" width="820" height="923" loading="lazy"></div></div></figure>
     </div>
   </section>
 
 </main>
 
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
 (() => {
   const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const toque = matchMedia('(hover: none)').matches;
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
 
-  /* ---------- palavras da seção 2: cada uma ocupa a largura toda ---------- */
-  const encaixar = () => {
-    const caixa = document.querySelector('.palavras');
-    if (!caixa) return;
-    const largura = caixa.clientWidth;
-    document.querySelectorAll('.encaixa').forEach(el => {
-      el.style.fontSize = '100px';
-      const w = el.scrollWidth || 1;
-      el.style.fontSize = (100 * largura / w) + 'px';
-    });
-  };
+  /* ---------- rolagem suave (Lenis, como no House of Honey) ---------- */
+  let lenis = null;
+  if (!semMovimento && window.Lenis) {
+    lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
+    lenis.stop();
+  }
+
+  /* ---------- divide o texto da história em palavras ---------- */
+  $$('.divide').forEach(el => {
+    let n = 0;
+    const partes = el.textContent.trim().split(/\s+/);
+    el.innerHTML = partes.map(p => `<span class="pm"><span style="--i:${n++}">${p}</span></span>`).join(' ');
+  });
+
+  /* ---------- faixas correndo: repete o conteúdo até cobrir 2 telas ---------- */
+  const trilhos = $$('.trilho').map(t => {
+    const unidade = t.innerHTML;
+    t.innerHTML = unidade;
+    const larguraUnidade = () => t.firstElementChild.getBoundingClientRect().width || 1;
+    const encher = () => {
+      t.innerHTML = unidade;
+      const u = larguraUnidade();
+      const vezes = Math.ceil((innerWidth * 2) / u) + 1;
+      t.innerHTML = unidade.repeat(vezes);
+      return u;
+    };
+    return { el: t, dir: Number(t.dataset.dir || -1), vel: Number(t.dataset.vel || 1), x: 0, u: encher(), encher };
+  });
 
   /* ---------- tela de carregamento ---------- */
-  const tela = document.getElementById('carregando');
-  const pimenta = document.getElementById('pimentaCarga');
-  const contador = document.getElementById('contador');
-  const imgs = [...document.querySelectorAll('.hero img, .du')];
-  let prontas = 0;
-  const total = imgs.length + 1; // +1 para as fontes
-  const marca = () => { prontas++; };
-  imgs.forEach(img => {
-    if (img.complete) marca();
-    else { img.addEventListener('load', marca, { once: true }); img.addEventListener('error', marca, { once: true }); }
-  });
+  const tela = $('#carregando');
+  const pimenta = $('#pimentaCarga');
+  const contador = $('#contador');
+  const imgs = $$('.hero img, .busto');
   let fontesOk = false;
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { fontesOk = true; marca(); encaixar(); });
-
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+    fontesOk = true;
+    trilhos.forEach(t => { t.u = t.encher(); });
+  });
+  const total = imgs.length + 1;
   const inicio = performance.now();
   const MINIMO = semMovimento ? 0 : 1800;
-  let mostrado = 0;
+  let mostrado = 0, abriu = false, ultimo = inicio;
 
   const abrir = () => {
+    if (abriu) return; abriu = true;
     contador.textContent = '100';
     pimenta.style.setProperty('--p', '100%');
     setTimeout(() => {
       tela.classList.add('saindo');
       document.body.classList.remove('travado');
       document.body.classList.add('aberto');
-      setTimeout(() => {
-        tela.classList.add('foi');
-        document.getElementById('hero').classList.add('livre');
-      }, 2200);
+      if (lenis) lenis.start();
+      setTimeout(() => { tela.classList.add('foi'); $('#hero').classList.add('livre'); }, 2200);
     }, semMovimento ? 0 : 350);
   };
-
-  let abriu = false, ultimo = inicio;
-  const abrirUmaVez = () => { if (abriu) return; abriu = true; abrir(); };
-  const passo = (agora) => {
+  const carga = (agora) => {
     if (abriu) return;
     const dt = Math.min(100, agora - ultimo); ultimo = agora;
-    const real = Math.max(prontas, imgs.filter(i => i.complete).length + (fontesOk ? 1 : 0)) / total;
-    const tempo = Math.min(1, (agora - inicio) / Math.max(MINIMO, 1));
+    const real = (imgs.filter(i => i.complete).length + (fontesOk ? 1 : 0)) / total;
+    const tempo = clamp((agora - inicio) / Math.max(MINIMO, 1));
     const alvo = Math.min(real, tempo);
     mostrado += (alvo - mostrado) * (1 - Math.exp(-dt / 110));
     if (alvo >= 1 && mostrado > 0.97) mostrado = 1;
     const p = Math.round(mostrado * 100);
     contador.textContent = p;
     pimenta.style.setProperty('--p', p + '%');
-    if (mostrado >= 1) abrirUmaVez();
-    else requestAnimationFrame(passo);
+    if (mostrado >= 1) abrir(); else requestAnimationFrame(carga);
   };
-  requestAnimationFrame(passo);
-  // se alguma coisa travar, abre assim mesmo
-  setTimeout(abrirUmaVez, 6000);
+  requestAnimationFrame(carga);
+  setTimeout(abrir, 6000);
 
-  /* ---------- revela as seções quando entram na tela ---------- */
-  const observa = new IntersectionObserver((entradas) => {
-    entradas.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visto'); observa.unobserve(e.target); }
-    });
-  }, { threshold: 0.18 });
-  document.querySelectorAll('.apelidos, .historia').forEach(el => observa.observe(el));
+  /* ---------- revelações quando entram na tela ---------- */
+  const observa = new IntersectionObserver((es) => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visto'); observa.unobserve(e.target); }
+  }), { threshold: 0.25 });
+  $$('.apelidos, .historia').forEach(el => observa.observe(el));
+  const observaFoto = new IntersectionObserver((es) => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visto'); observaFoto.unobserve(e.target); }
+  }), { threshold: 0.15 });
+  $$('.foto').forEach(el => observaFoto.observe(el));
 
-  const observaFoto = new IntersectionObserver((entradas) => {
-    entradas.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visto'); observaFoto.unobserve(e.target); }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('.foto').forEach(el => observaFoto.observe(el));
+  if (semMovimento) return;
 
-  /* ---------- rolagem: fotos em velocidades diferentes e o nome deslizando ---------- */
-  const fotos = [...document.querySelectorAll('.foto')];
-  const nome = document.getElementById('nomeFundo');
-  const historia = document.getElementById('historia');
-  let agendado = false;
-  const rolar = () => {
-    agendado = false;
+  /* ---------- mouse para o 3D do hero ---------- */
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  addEventListener('pointermove', (e) => {
+    mx = (e.clientX / innerWidth) * 2 - 1;
+    my = (e.clientY / innerHeight) * 2 - 1;
+  }, { passive: true });
+
+  /* ---------- um só laço de animação para tudo ---------- */
+  const paineis = $$('.painel');
+  const proximos = paineis.map(p => p.nextElementSibling);
+  const palco = $('#palco');
+  const hero = $('#hero');
+  const busto = $('#busto');
+  const historia = $('#historia');
+  const gastro = $('#gastronomia');
+  const titulo = $('#gastronomia-titulo');
+  const fotos = $$('.foto');
+  let yAnterior = scrollY, vel = 0, tAnterior = performance.now();
+
+  const quadro = (agora) => {
+    const dt = Math.min(64, agora - tAnterior) / 16.67; tAnterior = agora;
     const vh = innerHeight;
-    fotos.forEach(f => {
-      const r = f.getBoundingClientRect();
-      const meio = r.top + r.height / 2 - vh / 2;
-      f.style.setProperty('--py', (meio * parseFloat(f.dataset.v || 0)).toFixed(1) + 'px');
+    const y = scrollY;
+    vel += ((y - yAnterior) - vel) * 0.15;
+    yAnterior = y;
+
+    // painéis: quem está sendo coberto encolhe e escurece
+    paineis.forEach((p, i) => {
+      const prox = proximos[i];
+      // seção mais alta que a tela gruda pelo pé, pra dar tempo de ler tudo
+      const topo = Math.min(0, vh - p.offsetHeight);
+      if (p.style.top !== topo + 'px') p.style.top = topo + 'px';
+      if (!prox) return;
+      const c = clamp(1 - prox.getBoundingClientRect().top / vh);
+      p.style.transform = c > 0 ? `scale(${1 - c * 0.08})` : '';
+      p.style.setProperty('--veu', (c * 0.65).toFixed(3));
+      p.style.visibility = c >= 1 ? 'hidden' : '';
     });
+
+    // hero em 3D: segue o mouse (ou balança sozinho no celular) e tomba pra trás ao sair
+    const sai = clamp(-hero.getBoundingClientRect().top / vh + (1 - clamp(proximos[0].getBoundingClientRect().top / vh)));
+    const alvoX = toque ? Math.sin(agora / 1600) * 0.5 : mx;
+    const alvoY = toque ? Math.cos(agora / 2100) * 0.4 : my;
+    rx += (alvoX - rx) * 0.06 * dt;
+    ry += (alvoY - ry) * 0.06 * dt;
+    if (sai < 1) {
+      palco.style.transform =
+        `translate3d(0,${(-sai * 60).toFixed(1)}px,${(-sai * 380).toFixed(1)}px) ` +
+        `rotateX(${(-ry * 5 + sai * 28).toFixed(2)}deg) rotateY(${(rx * 7).toFixed(2)}deg)`;
+      palco.style.opacity = (1 - sai * 0.9).toFixed(3);
+    }
+
+    // faixas: andam sempre e aceleram com a rolagem
+    trilhos.forEach(t => {
+      const r = t.el.getBoundingClientRect();
+      if (r.bottom < -50 || r.top > vh + 50) return;
+      t.x += t.dir * t.vel * (0.6 + Math.abs(vel) * 0.35) * dt;
+      if (t.x <= -t.u) t.x += t.u;
+      if (t.x > 0) t.x -= t.u;
+      t.el.style.transform = `translate3d(${t.x.toFixed(2)}px,0,0)`;
+    });
+
+    // busto: sobe mais devagar que a página e gira de leve
     const h = historia.getBoundingClientRect();
-    const prog = (vh - h.top) / (vh + h.height); // 0 a 1 enquanto a seção passa
-    nome.style.setProperty('--x', (-prog * nome.offsetWidth * 0.35 + innerWidth * 0.05).toFixed(1) + 'px');
+    if (h.top < vh && h.bottom > 0) {
+      const ph = clamp((vh - h.top) / vh);
+      busto.style.setProperty('--by', ((1 - ph) * 80).toFixed(1) + 'px');
+      busto.style.setProperty('--br', ((1 - ph) * -4 + rx * 2).toFixed(2) + 'deg');
+    }
+
+    // gastronomia: o título fica parado no topo e some conforme a rolagem
+    const g = gastro.getBoundingClientRect();
+    if (g.top < vh && g.bottom > 0) {
+      const pt = clamp(-g.top / (vh * 0.75));
+      titulo.style.setProperty('--o', (1 - pt).toFixed(3));
+      titulo.style.setProperty('--ty', (-pt * 70).toFixed(1) + 'px');
+      titulo.style.setProperty('--s', (1 - pt * 0.12).toFixed(3));
+      titulo.style.setProperty('--b', (pt * 10).toFixed(1) + 'px');
+
+      // fotos: velocidades diferentes, parallax dentro da moldura e somem ao sair por cima
+      fotos.forEach(f => {
+        const r = f.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        const meio = r.top + r.height / 2 - vh / 2;
+        f.style.setProperty('--py', (meio * Number(f.dataset.v)).toFixed(1) + 'px');
+        const pi = clamp((vh - r.top) / (vh + r.height));
+        f.style.setProperty('--ip', (-15 * pi).toFixed(2) + '%');
+        const saida = clamp(r.bottom / (vh * 0.4));
+        f.style.setProperty('--sai-o', saida.toFixed(3));
+        f.style.setProperty('--sai-s', (0.88 + saida * 0.12).toFixed(3));
+      });
+    }
+
+    requestAnimationFrame(quadro);
   };
-  if (!semMovimento) {
-    addEventListener('scroll', () => { if (!agendado) { agendado = true; requestAnimationFrame(rolar); } }, { passive: true });
-    rolar();
-  }
+
+  const comecar = () => {
+    if (lenis) {
+      const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(quadro);
+  };
+  comecar();
 
   let espera;
   addEventListener('resize', () => {
     clearTimeout(espera);
-    espera = setTimeout(() => { encaixar(); if (!semMovimento) rolar(); }, 120);
+    espera = setTimeout(() => trilhos.forEach(t => { t.u = t.encher(); t.x = 0; }), 150);
   });
-  encaixar();
 })();
 </script>
 </body>

@@ -6,10 +6,12 @@ No ar em https://caseirinha-da-casa.vercel.app
 ## O site
 
 1. Tela de carregamento com a pimenta enchendo de vermelho
-2. Hero com o letreiro "Caseirinha / Da Casa" e o mascote segurando a garrafa
-3. Caseirinha, Mal criadinha, Venenosinha
-4. A história do Du, com ele recortado sem fundo
+2. Hero em 3D com o letreiro "Caseirinha / Da Casa" e o mascote segurando a garrafa
+3. Caseirinha, Mal criadinha, Venenosinha em faixas correndo
+4. A história do Du, com o mascote de boné
 5. Explorando a Gastronomia em São Paulo, com as fotos aparecendo na rolagem
+
+As seções grudam no topo e a próxima desliza por cima. Rolagem suave com Lenis.
 
 ## Estrutura
 
@@ -17,7 +19,7 @@ No ar em https://caseirinha-da-casa.vercel.app
   - `index.html`: o site inteiro
   - `design-system/tokens.css`: cores, fontes, espaços e movimento
   - `design-system/extraido/`: o que foi extraído dos sites de referência
-  - `assets/`: mascote, pimenta, recorte do Du e fotos em `comida/`
+  - `assets/`: mascotes sem contorno (WebP), pimenta e fotos em `comida/`
   - `servidor.ps1`: servidor local para visualizar
   - `deploy.ps1`: publica na Vercel (projeto caseirinha-da-casa)
 - `mascote-otaldodu/`: mascotes em alta (1536px, fundo transparente)
