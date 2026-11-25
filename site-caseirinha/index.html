@@ -8,7 +8,7 @@
 <script>document.documentElement.classList.add('js')</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&family=Bricolage+Grotesque:opsz,wght@12..96,300..800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wdth,wght@62..125,100..900&family=Fredoka:wght@400..700&family=Lilita+One&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="design-system/tokens.css">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -38,7 +38,6 @@
     clip-path:inset(0 0 0 0);
     transition:clip-path 1.1s var(--sai);
   }
-  /* sai "fechando" de baixo pra cima, como o menu do Leveled */
   .carregando.saindo{clip-path:inset(0 0 100% 0)}
   .carregando.foi{display:none}
   .carregando-miolo{display:grid;justify-items:center;gap:var(--e3);transition:transform 1.1s var(--sai),opacity .5s ease}
@@ -64,8 +63,7 @@
   @keyframes balanca{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
 
   /* =========================================================
-     PAINÉIS QUE SE SOBREPÕEM (Shopify Editions)
-     cada seção gruda no topo e a próxima desliza por cima
+     PAINÉIS QUE SE SOBREPÕEM
      ========================================================= */
   .painel{
     position:sticky;
@@ -113,7 +111,6 @@
     max-width:1500px;
     transform-style:preserve-3d;
   }
-  /* luz atrás, bem mais "funda" que o resto */
   .luz{
     position:absolute;
     left:50%;top:50%;
@@ -122,7 +119,7 @@
     background:radial-gradient(closest-side, rgba(28,140,82,.55), rgba(0,100,55,0) 70%);
     pointer-events:none;
   }
-  .camada-letreiro{transform:translateZ(20px);transform-style:preserve-3d}
+  .camada-letreiro{transform:translateZ(20px)}
   .camada-mascote{transform:translateZ(110px);flex:none}
   .mascote{
     width:var(--m);
@@ -140,9 +137,11 @@
     text-align:center;
     position:relative;
   }
-  .linha{display:flex;justify-content:center;white-space:nowrap}
+  /* cada linha tem sua própria perspectiva: cada letra gira em 3D sozinha */
+  .linha{display:flex;justify-content:center;white-space:nowrap;perspective:5em}
   .l2{font-size:.56em;margin-top:.02em}
   .sobe{display:inline-block}
+  .mexe{display:inline-block;transform-origin:50% 75%}
   .ch{
     position:relative;
     display:inline-block;
@@ -211,7 +210,7 @@
   }
 
   /* =========================================================
-     2. OS APELIDOS EM FAIXAS CORRENDO (House of Honey + Shopify)
+     2. OS APELIDOS EM FAIXAS CORRENDO
      ========================================================= */
   .apelidos{
     z-index:2;
@@ -219,7 +218,7 @@
     display:flex;
     flex-direction:column;
     justify-content:center;
-    gap:1.5svh;
+    gap:2svh;
     padding:var(--e5) 0;
   }
   .faixa{
@@ -227,7 +226,8 @@
     font-stretch:var(--largo);
     font-weight:900;
     text-transform:uppercase;
-    font-size:min(22svh,15vw);
+    /* tamanho em que a palavra inteira cabe na tela enquanto passa */
+    font-size:min(19svh,10.5vw);
     line-height:.86;
     letter-spacing:-.01em;
     white-space:nowrap;
@@ -238,7 +238,7 @@
   .faixa:nth-child(3){color:var(--vermelho)}
   .trilho{display:flex;width:max-content;will-change:transform}
   .trilho span{display:flex;align-items:center}
-  .trilho img{height:.62em;width:auto;margin:0 .22em;transform:rotate(18deg)}
+  .trilho img{height:.62em;width:auto;margin:0 .3em;transform:rotate(18deg)}
   .faixa:nth-child(2) .trilho img{transform:rotate(-18deg)}
   .js .faixa .entra{transform:translateY(108%)}
   .faixa .entra{display:block}
@@ -261,10 +261,9 @@
     position:absolute;
     left:0;top:50%;
     transform:translateY(-50%);
-    font-stretch:var(--largo);
-    font-weight:900;
+    font-family:'Lilita One',var(--fonte);
     font-size:min(30vw,50vh);
-    line-height:.8;
+    line-height:.85;
     text-transform:uppercase;
     white-space:nowrap;
     color:var(--vermelho-sombra);
@@ -285,52 +284,85 @@
     z-index:1;
     align-self:center;
     padding:var(--e5) 0;
-    font-family:'Bricolage Grotesque',var(--fonte);
-    font-optical-sizing:auto;
+    font-family:'Fredoka',var(--fonte);
   }
+  /* título vivo: letras gordinhas com sombra verde de adesivo, dançando */
   .historia-texto h2{
-    font-weight:800;
-    font-size:clamp(3.5rem,2rem + 6vw,8rem);
-    line-height:.9;
-    letter-spacing:-.035em;
-    margin-bottom:var(--e4);
+    font-family:'Lilita One',var(--fonte);
+    font-weight:400;
+    font-size:clamp(4rem,2rem + 7vw,9.5rem);
+    line-height:.88;
+    letter-spacing:.005em;
+    margin-bottom:var(--e3);
+    white-space:nowrap;
+  }
+  .letra{display:inline-block}
+  .letra > span{
+    display:inline-block;
+    color:var(--branco);
+    text-shadow:.045em .055em 0 var(--verde-fundo);
+    animation:danca 2.6s ease-in-out calc(var(--i) * -.18s) infinite;
+    transition:color .2s ease;
+  }
+  .letra:hover > span{color:#ffe7a3;animation-duration:.5s}
+  @keyframes danca{
+    0%,100%{transform:translateY(0) rotate(0)}
+    25%{transform:translateY(-.06em) rotate(-4deg)}
+    75%{transform:translateY(.03em) rotate(3deg)}
   }
   .historia-texto p{
-    font-weight:400;
-    font-size:clamp(1.2rem,.9rem + .9vw,1.75rem);
-    line-height:1.32;
-    letter-spacing:-.01em;
-    max-width:30em;
+    font-weight:500;
+    font-size:clamp(1.2rem,.85rem + .9vw,1.8rem);
+    line-height:1.28;
+    max-width:28em;
   }
   .historia-texto p + p{margin-top:var(--e3)}
-  /* palavras sobem uma a uma */
-  .pm{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+  .bordao{
+    display:inline-block;
+    font-family:'Lilita One',var(--fonte);
+    font-weight:400;
+    background:var(--verde);
+    color:var(--branco);
+    padding:.02em .3em .08em;
+    transform:rotate(-2deg);
+    box-shadow:.12em .14em 0 var(--verde-noite);
+  }
+  /* palavras pulam uma a uma */
+  .pm{display:inline-block;vertical-align:top}
   .pm > span{display:inline-block}
-  .js .pm > span{transform:translateY(110%)}
-  .historia.visto .pm > span{transform:none;transition:transform 1s var(--sai) calc(var(--i) * 12ms)}
-  /* o busto aparece com o corte do Leveled */
+  .js .pm > span{transform:translateY(.7em) scale(.6) rotate(-8deg);opacity:0}
+  .historia.visto .pm > span{
+    transform:none;opacity:1;
+    transition:transform .7s var(--mola) calc(var(--i) * 14ms),opacity .3s ease calc(var(--i) * 14ms);
+  }
+  .js .letra{transform:translateY(.4em) scale(.4);opacity:0}
+  .historia.visto .letra{transform:none;opacity:1;transition:transform .8s var(--mola) calc(var(--i) * 60ms),opacity .3s ease calc(var(--i) * 60ms)}
   .js .busto-caixa{clip-path:inset(20% 0 0 0);opacity:0}
   .historia.visto .busto-caixa{clip-path:inset(-20% -20% 0 -20%);opacity:1;transition:clip-path 1.5s cubic-bezier(.55,0,.1,1),opacity 1s ease}
 
   /* =========================================================
-     4. GASTRONOMIA
+     4. GASTRONOMIA: fotos enfileiradas que explodem
      ========================================================= */
   .gastronomia{
     position:relative;
     z-index:4;
     background:var(--branco);
-    height:330svh;
+    height:290svh;
     box-shadow:0 -30px 60px rgba(0,0,0,.25);
   }
-  .gastronomia-titulo{
+  .estagio{
     position:sticky;
     top:0;
     height:100svh;
-    margin-bottom:-100svh;
+    overflow:hidden;
+  }
+  .gastronomia-titulo{
+    position:absolute;
+    left:0;right:0;top:11svh;
+    z-index:3;
     display:flex;
     justify-content:center;
-    padding:13svh var(--e3) 0;
-    z-index:3;
+    padding:0 var(--e3);
     pointer-events:none;
   }
   .gastronomia-titulo h2{
@@ -338,40 +370,32 @@
     text-align:center;
     font-stretch:var(--largo);
     font-weight:850;
-    font-size:var(--t-titulo);
+    font-size:clamp(2.5rem,1rem + 4.6vw,6rem);
     line-height:.92;
     letter-spacing:-.02em;
     color:var(--verde);
     opacity:var(--o,1);
-    transform:translate3d(0,var(--ty,0px),0) scale(var(--s,1));
-    filter:blur(var(--b,0px));
   }
-  .fotos{position:absolute;inset:0;z-index:2}
   .foto{
     position:absolute;
-    left:var(--x);top:var(--y);
-    width:var(--w);
-    transform:translate3d(0,var(--py,0px),0) scale(var(--sai-s,1));
-    opacity:var(--sai-o,1);
+    left:50%;top:50%;
+    width:var(--w,20vw);
+    margin:0;
+    will-change:transform;
   }
   .foto .quadro{
     overflow:hidden;
     aspect-ratio:4/5;
     background:#e9ece8;
+    box-shadow:0 18px 40px rgba(0,40,20,.18);
   }
   .foto .zoom{width:100%;height:100%;transition:transform .9s var(--sai)}
-  .foto img{
-    width:100%;
-    height:118%;
-    object-fit:cover;
-    transform:translate3d(0,var(--ip,-9%),0);
-  }
-  @media (hover:hover){.foto:hover .zoom{transform:scale(1.07)}}
-  /* revelação do Leveled: corte de 20% + opacidade, e a foto chega levemente torta */
-  .js .foto .quadro{clip-path:inset(20% 0 0 0);opacity:0;transform:rotate(var(--r,0deg)) scale(.94)}
-  .foto.visto .quadro{
-    clip-path:inset(0 0 0 0);opacity:1;transform:none;
-    transition:clip-path 1.5s cubic-bezier(.55,0,.1,1),opacity 1s ease,transform 1.5s var(--sai);
+  .foto img{width:100%;height:100%;object-fit:cover}
+  @media (hover:hover){.foto:hover .zoom{transform:scale(1.08)}}
+  .js .foto .quadro{clip-path:inset(20% 0 0 0);opacity:0}
+  .gastronomia.visto .foto .quadro{
+    clip-path:inset(0 0 0 0);opacity:1;
+    transition:clip-path 1.3s cubic-bezier(.55,0,.1,1) calc(var(--i) * 70ms),opacity .8s ease calc(var(--i) * 70ms);
   }
 
   /* ---------- telas menores ---------- */
@@ -381,23 +405,22 @@
     .palco{flex-direction:column;gap:var(--e3)}
     .camada-mascote{transform:translateZ(70px)}
 
-    .faixa{font-size:min(16svh,26vw)}
+    .faixa{font-size:min(14svh,13vw)}
 
     .historia{grid-template-columns:1fr;padding:0 var(--e2)}
     .historia-texto{order:-1;padding:var(--e5) 0 var(--e3)}
+    .historia-texto h2{font-size:19vw}
     .busto-caixa{width:min(92vw,62svh)}
     .nome-fundo{top:auto;bottom:6%;transform:none;font-size:42vw}
 
-    .gastronomia{height:420svh}
+    .gastronomia{height:300svh}
+    .gastronomia-titulo{top:9svh}
     .gastronomia-titulo h2{font-size:10.6vw;font-stretch:112%}
-    .foto{width:calc(var(--w) * 2.4)}
-    .foto:nth-child(odd){left:5%}
-    .foto:nth-child(even){left:auto;right:5%}
   }
 
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation:none !important;transition:none !important}
-    .js .sobe,.js .mascote,.js .faixa .entra,.js .pm > span,.js .foto .quadro{transform:none;opacity:1}
+    .js .sobe,.js .mascote,.js .faixa .entra,.js .pm > span,.js .letra{transform:none;opacity:1}
     .js .brilho{visibility:visible}
     .js .foto .quadro,.js .busto-caixa,.js .hero .linha{clip-path:none;opacity:1}
   }
@@ -423,7 +446,7 @@
       <div class="palco" id="palco">
         <div class="luz" aria-hidden="true"></div>
         <div class="camada-letreiro">
-          <h1 class="letreiro" aria-label="Caseirinha da Casa">
+          <h1 class="letreiro" id="letreiro" aria-label="Caseirinha da Casa">
             <span class="linha l1" aria-hidden="true">
               <span class="sobe" style="--i:0"><span class="ch" data-l="C" style="--t:-1">C</span></span>
               <span class="sobe" style="--i:1"><span class="ch" data-l="A" style="--t:-.778">A</span></span>
@@ -470,32 +493,32 @@
 
   <!-- 3. a história -->
   <section class="painel historia" id="historia" aria-labelledby="historia-titulo">
-    <div class="nome-fundo" aria-hidden="true"><div class="trilho" data-dir="-1" data-vel=".5"><span>O Tal do Du</span></div></div>
+    <div class="nome-fundo" aria-hidden="true"><div class="trilho" data-dir="-1" data-vel=".9"><span>O Tal do Du</span></div></div>
     <div class="busto-caixa">
       <img class="busto" id="busto" src="assets/mascote-busto.webp" alt="O mascote do Tal do Du, de boné verde, sorrindo" width="1200" height="1301">
     </div>
     <div class="historia-texto">
-      <h2 id="historia-titulo" class="divide">O Tal do Du</h2>
+      <h2 id="historia-titulo" class="letras">O Tal do Du</h2>
       <p class="divide">Eduardo de Lima Martins, mais conhecido como O Tal do Du, conquistou seu público mostrando onde comer em São Paulo. Nos vídeos, ele visita restaurantes, prova os pratos e compartilha suas impressões com o humor de quem tá indicando um lugar pra um amigo.</p>
-      <p class="divide">Entre uma garfada e outra, uma pergunta sobre a pimenta virou bordão: “Tem a caseirinha da casa?” A frase ganhou vida nas redes e virou parte da identidade do Du. Quem chega pelo meme encontra o que já fazia o público voltar: comida, dicas de lugares pra conhecer e o jeito descontraído dele de contar como foi a visita.</p>
+      <p class="divide">Entre uma garfada e outra, uma pergunta sobre a pimenta virou bordão: <span class="bordao">“Tem a caseirinha da casa?”</span> A frase ganhou vida nas redes e virou parte da identidade do Du. Quem chega pelo meme encontra o que já fazia o público voltar: comida, dicas de lugares pra conhecer e o jeito descontraído dele de contar como foi a visita.</p>
     </div>
     <div class="veu" aria-hidden="true"></div>
   </section>
 
   <!-- 4. gastronomia -->
   <section class="gastronomia" id="gastronomia" aria-labelledby="gastronomia-titulo">
-    <div class="gastronomia-titulo">
-      <h2 id="gastronomia-titulo">Explorando a Gastronomia em São Paulo</h2>
-    </div>
-    <div class="fotos">
-      <figure class="foto" style="--x:5%;--y:6%;--w:17vw;--r:-5deg" data-v="-.16"><div class="quadro"><div class="zoom"><img src="assets/comida/bife-ancho.jpg" alt="O Du cortando um bife ancho" width="820" height="1033" loading="lazy"></div></div></figure>
-      <figure class="foto" style="--x:74%;--y:9%;--w:18vw;--r:4deg" data-v=".1"><div class="quadro"><div class="zoom"><img src="assets/comida/burger.jpg" alt="O Du pingando pimenta num hambúrguer" width="820" height="1066" loading="lazy"></div></div></figure>
-      <figure class="foto" style="--x:41%;--y:21%;--w:15vw;--r:-3deg" data-v="-.28"><div class="quadro"><div class="zoom"><img src="assets/comida/peixe-camarao.jpg" alt="O Du mostrando um prato de peixe com camarão e batatas" width="820" height="1084" loading="lazy"></div></div></figure>
-      <figure class="foto" style="--x:12%;--y:35%;--w:15vw;--r:5deg" data-v=".2"><div class="quadro"><div class="zoom"><img src="assets/comida/petiscos.jpg" alt="O Du provando um petisco empanado" width="820" height="1126" loading="lazy"></div></div></figure>
-      <figure class="foto" style="--x:75%;--y:42%;--w:16vw;--r:-4deg" data-v="-.12"><div class="quadro"><div class="zoom"><img src="assets/comida/bolo-chocolate.jpg" alt="O Du com um bolo de chocolate" width="820" height="1089" loading="lazy"></div></div></figure>
-      <figure class="foto" style="--x:48%;--y:55%;--w:18vw;--r:3deg" data-v=".22"><div class="quadro"><div class="zoom"><img src="assets/comida/contrafile-ovo.jpg" alt="O Du comendo contrafilé com ovo e farofa" width="820" height="1143" loading="lazy"></div></div></figure>
-      <figure class="foto" style="--x:6%;--y:65%;--w:18vw;--r:-4deg" data-v="-.2"><div class="quadro"><div class="zoom"><img src="assets/comida/bife-farofa.jpg" alt="O Du segurando um copo de pimenta na frente de um bife com farofa" width="820" height="1263" loading="lazy"></div></div></figure>
-      <figure class="foto" style="--x:68%;--y:78%;--w:17vw;--r:5deg" data-v=".1"><div class="quadro"><div class="zoom"><img src="assets/comida/arroz-carnes.jpg" alt="O Du servindo arroz com carnes" width="820" height="923" loading="lazy"></div></div></figure>
+    <div class="estagio" id="estagio">
+      <div class="gastronomia-titulo" id="titulo-gastro">
+        <h2 id="gastronomia-titulo">Explorando a Gastronomia em São Paulo</h2>
+      </div>
+      <figure class="foto" style="--i:0"><div class="quadro"><div class="zoom"><img src="assets/comida/bife-ancho.jpg" alt="O Du cortando um bife ancho" width="820" height="1033"></div></div></figure>
+      <figure class="foto" style="--i:1"><div class="quadro"><div class="zoom"><img src="assets/comida/burger.jpg" alt="O Du pingando pimenta num hambúrguer" width="820" height="1066"></div></div></figure>
+      <figure class="foto" style="--i:2"><div class="quadro"><div class="zoom"><img src="assets/comida/peixe-camarao.jpg" alt="O Du mostrando um prato de peixe com camarão e batatas" width="820" height="1084"></div></div></figure>
+      <figure class="foto" style="--i:3"><div class="quadro"><div class="zoom"><img src="assets/comida/petiscos.jpg" alt="O Du provando um petisco empanado" width="820" height="1126"></div></div></figure>
+      <figure class="foto" style="--i:4"><div class="quadro"><div class="zoom"><img src="assets/comida/bolo-chocolate.jpg" alt="O Du com um bolo de chocolate" width="820" height="1089"></div></div></figure>
+      <figure class="foto" style="--i:5"><div class="quadro"><div class="zoom"><img src="assets/comida/contrafile-ovo.jpg" alt="O Du comendo contrafilé com ovo e farofa" width="820" height="1143"></div></div></figure>
+      <figure class="foto" style="--i:6"><div class="quadro"><div class="zoom"><img src="assets/comida/bife-farofa.jpg" alt="O Du segurando um copo de pimenta na frente de um bife com farofa" width="820" height="1263"></div></div></figure>
+      <figure class="foto" style="--i:7"><div class="quadro"><div class="zoom"><img src="assets/comida/arroz-carnes.jpg" alt="O Du servindo arroz com carnes" width="820" height="923"></div></div></figure>
     </div>
   </section>
 
@@ -507,36 +530,58 @@
   const semMovimento = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const toque = matchMedia('(hover: none)').matches;
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => [...document.querySelectorAll(s)];
 
-  /* ---------- rolagem suave (Lenis, como no House of Honey) ---------- */
+  /* ---------- rolagem suave ---------- */
   let lenis = null;
   if (!semMovimento && window.Lenis) {
     lenis = new Lenis({ lerp: 0.085, smoothWheel: true });
     lenis.stop();
   }
 
-  /* ---------- divide o texto da história em palavras ---------- */
+  /* ---------- texto da história: palavras (e o bordão inteiro) pulam uma a uma ---------- */
   $$('.divide').forEach(el => {
     let n = 0;
-    const partes = el.textContent.trim().split(/\s+/);
-    el.innerHTML = partes.map(p => `<span class="pm"><span style="--i:${n++}">${p}</span></span>`).join(' ');
+    const partes = [];
+    el.childNodes.forEach(no => {
+      if (no.nodeType === 3) {
+        no.textContent.split(/(\s+)/).forEach(p => {
+          if (!p) return;
+          if (/^\s+$/.test(p)) partes.push(' ');
+          else partes.push(`<span class="pm"><span style="--i:${n++}">${p}</span></span>`);
+        });
+      } else {
+        partes.push(`<span class="pm"><span style="--i:${n++}">${no.outerHTML}</span></span>`);
+      }
+    });
+    el.innerHTML = partes.join('');
+  });
+  $$('.letras').forEach(el => {
+    el.innerHTML = [...el.textContent].map((c, i) =>
+      c === ' ' ? ' ' : `<span class="letra" style="--i:${i}"><span style="--i:${i}">${c}</span></span>`).join('');
   });
 
-  /* ---------- faixas correndo: repete o conteúdo até cobrir 2 telas ---------- */
+  /* ---------- letras do hero ganham uma camada que mexe em 3D ---------- */
+  const letras = $$('.letreiro .ch').map(ch => {
+    const m = document.createElement('span');
+    m.className = 'mexe';
+    ch.parentNode.insertBefore(m, ch);
+    m.appendChild(ch);
+    return { el: m, rx: 0, ry: 0, z: 0, y: 0 };
+  });
+
+  /* ---------- faixas correndo ---------- */
   const trilhos = $$('.trilho').map(t => {
     const unidade = t.innerHTML;
-    t.innerHTML = unidade;
-    const larguraUnidade = () => t.firstElementChild.getBoundingClientRect().width || 1;
     const encher = () => {
       t.innerHTML = unidade;
-      const u = larguraUnidade();
-      const vezes = Math.ceil((innerWidth * 2) / u) + 1;
-      t.innerHTML = unidade.repeat(vezes);
+      const u = t.firstElementChild.getBoundingClientRect().width || 1;
+      t.innerHTML = unidade.repeat(Math.ceil((innerWidth * 2) / u) + 1);
       return u;
     };
-    return { el: t, dir: Number(t.dataset.dir || -1), vel: Number(t.dataset.vel || 1), x: 0, u: encher(), encher };
+    return { el: t, dir: Number(t.dataset.dir || -1), vel: Number(t.dataset.vel || 2.6), x: 0, u: encher(), encher };
   });
 
   /* ---------- tela de carregamento ---------- */
@@ -582,35 +627,96 @@
   requestAnimationFrame(carga);
   setTimeout(abrir, 6000);
 
-  /* ---------- revelações quando entram na tela ---------- */
+  /* ---------- revelações ---------- */
   const observa = new IntersectionObserver((es) => es.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visto'); observa.unobserve(e.target); }
   }), { threshold: 0.25 });
   $$('.apelidos, .historia').forEach(el => observa.observe(el));
-  const observaFoto = new IntersectionObserver((es) => es.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('visto'); observaFoto.unobserve(e.target); }
-  }), { threshold: 0.15 });
-  $$('.foto').forEach(el => observaFoto.observe(el));
+  // a fila de fotos aparece assim que a seção começa a subir
+  const observaGastro = new IntersectionObserver((es) => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visto'); observaGastro.unobserve(e.target); }
+  }), { threshold: 0, rootMargin: '0px 0px -35% 0px' });
+  observaGastro.observe($('#gastronomia'));
 
-  if (semMovimento) return;
+  /* ---------- fotos: fila no meio -> explosão -> espalhadas (Snog Productions) ---------- */
+  const fotos = $$('.foto');
+  // posição final: x em vw e y em vh a partir do centro, largura em vw, giro e profundidade
+  const FINAL_DESK = [
+    { x: -37, y: -21, w: 21, r: -5, d: .7 },
+    { x: -12, y: -27, w: 20, r: 4, d: 1 },
+    { x: 13, y: -20, w: 22, r: -3, d: .8 },
+    { x: 37, y: -25, w: 20, r: 5, d: .55 },
+    { x: -36, y: 26, w: 20, r: 4, d: .9 },
+    { x: -12, y: 21, w: 22, r: -4, d: .65 },
+    { x: 13, y: 27, w: 20, r: 3, d: 1 },
+    { x: 37, y: 22, w: 21, r: -5, d: .6 },
+  ];
+  const FINAL_MOVEL = [
+    { x: -24, y: -35, w: 45, r: -4, d: .8 },
+    { x: 24, y: -31, w: 45, r: 4, d: 1 },
+    { x: -24, y: -11, w: 45, r: 3, d: .6 },
+    { x: 24, y: -7, w: 45, r: -3, d: .9 },
+    { x: -24, y: 13, w: 45, r: -4, d: 1 },
+    { x: 24, y: 17, w: 45, r: 4, d: .7 },
+    { x: -24, y: 37, w: 45, r: 3, d: .9 },
+    { x: 24, y: 41, w: 45, r: -3, d: .6 },
+  ];
+  // ordem em que cada foto sai da fila (as do meio primeiro, como uma explosão)
+  const ORDEM = [3, 2, 1, 0, 0, 1, 2, 3];
+  let plano = [];
+  const montarFotos = () => {
+    const vw = innerWidth / 100, vh = innerHeight / 100;
+    const movel = innerWidth < 900;
+    const fin = movel ? FINAL_MOVEL : FINAL_DESK;
+    const n = fotos.length;
+    const gap = 12;
+    const larguraFila = Math.min(innerWidth * 0.94, 1500);
+    const ws = movel ? 40 * vw : (larguraFila - gap * (n - 1)) / n;
+    plano = fotos.map((f, i) => {
+      const F = fin[i];
+      const w = F.w * vw;
+      f.style.setProperty('--w', w + 'px');
+      const sx = movel ? 0 : (i - (n - 1) / 2) * (ws + gap);
+      const sy = movel ? 9 * vh + (i - 3.5) * 4 : 12 * vh;
+      const sr = movel ? (i - 3.5) * 4 : 0;
+      return { f, sx, sy, sr, s0: ws / w, fx: F.x * vw, fy: F.y * vh, fr: F.r, d: F.d, atraso: ORDEM[i] * 0.06 };
+    });
+  };
+  montarFotos();
+  const sai = (t) => 1 - Math.pow(1 - t, 3);
+  const pintaFotos = (p, px, py, extra) => {
+    plano.forEach(o => {
+      const e = sai(clamp((p - o.atraso) / 0.72));
+      const x = lerp(o.sx, o.fx, e) + px * o.d * e;
+      const y = lerp(o.sy, o.fy, e) + py * o.d * e - extra * o.d;
+      const s = lerp(o.s0, 1, e);
+      const r = lerp(o.sr, o.fr, e);
+      o.f.style.transform = `translate(-50%,-50%) translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${r.toFixed(2)}deg) scale(${s.toFixed(4)})`;
+    });
+  };
+  pintaFotos(0, 0, 0, 0);
 
-  /* ---------- mouse para o 3D do hero ---------- */
-  let mx = 0, my = 0, rx = 0, ry = 0;
+  if (semMovimento) { pintaFotos(1, 0, 0, 0); return; }
+
+  /* ---------- mouse ---------- */
+  let mx = 0, my = 0, cx = -9999, cy = -9999, temMouse = false, rx = 0, ry = 0, pmx = 0, pmy = 0;
   addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'mouse') temMouse = true;
+    cx = e.clientX; cy = e.clientY;
     mx = (e.clientX / innerWidth) * 2 - 1;
     my = (e.clientY / innerHeight) * 2 - 1;
   }, { passive: true });
 
-  /* ---------- um só laço de animação para tudo ---------- */
+  /* ---------- laço único ---------- */
   const paineis = $$('.painel');
   const proximos = paineis.map(p => p.nextElementSibling);
   const palco = $('#palco');
   const hero = $('#hero');
+  const letreiro = $('#letreiro');
   const busto = $('#busto');
   const historia = $('#historia');
   const gastro = $('#gastronomia');
-  const titulo = $('#gastronomia-titulo');
-  const fotos = $$('.foto');
+  const tituloGastro = $('#titulo-gastro');
   let yAnterior = scrollY, vel = 0, tAnterior = performance.now();
 
   const quadro = (agora) => {
@@ -620,10 +726,9 @@
     vel += ((y - yAnterior) - vel) * 0.15;
     yAnterior = y;
 
-    // painéis: quem está sendo coberto encolhe e escurece
+    // painéis cobertos encolhem e escurecem
     paineis.forEach((p, i) => {
       const prox = proximos[i];
-      // seção mais alta que a tela gruda pelo pé, pra dar tempo de ler tudo
       const topo = Math.min(0, vh - p.offsetHeight);
       if (p.style.top !== topo + 'px') p.style.top = topo + 'px';
       if (!prox) return;
@@ -633,30 +738,51 @@
       p.style.visibility = c >= 1 ? 'hidden' : '';
     });
 
-    // hero em 3D: segue o mouse (ou balança sozinho no celular) e tomba pra trás ao sair
-    const sai = clamp(-hero.getBoundingClientRect().top / vh + (1 - clamp(proximos[0].getBoundingClientRect().top / vh)));
+    // hero: cena inteira segue o mouse e tomba ao sair
+    const saida = clamp(1 - proximos[0].getBoundingClientRect().top / vh);
     const alvoX = toque ? Math.sin(agora / 1600) * 0.5 : mx;
     const alvoY = toque ? Math.cos(agora / 2100) * 0.4 : my;
     rx += (alvoX - rx) * 0.06 * dt;
     ry += (alvoY - ry) * 0.06 * dt;
-    if (sai < 1) {
+    if (saida < 1) {
       palco.style.transform =
-        `translate3d(0,${(-sai * 60).toFixed(1)}px,${(-sai * 380).toFixed(1)}px) ` +
-        `rotateX(${(-ry * 5 + sai * 28).toFixed(2)}deg) rotateY(${(rx * 7).toFixed(2)}deg)`;
-      palco.style.opacity = (1 - sai * 0.9).toFixed(3);
+        `translate3d(0,${(-saida * 60).toFixed(1)}px,${(-saida * 380).toFixed(1)}px) ` +
+        `rotateX(${(-ry * 5 + saida * 28).toFixed(2)}deg) rotateY(${(rx * 7).toFixed(2)}deg)`;
+      palco.style.opacity = (1 - saida * 0.9).toFixed(3);
+
+      // cada letra: onda lenta sempre, e perto do mouse ela vira e salta pra frente
+      const raio = parseFloat(getComputedStyle(letreiro).fontSize) * 0.9;
+      letras.forEach((L, i) => {
+        let f = 0, nx = 0, ny = 0;
+        if (temMouse) {
+          const b = L.el.getBoundingClientRect();
+          nx = (cx - (b.left + b.width / 2)) / raio;
+          ny = (cy - (b.top + b.height / 2)) / raio;
+          f = Math.exp(-(nx * nx + ny * ny) * 0.55);
+        }
+        const onda = agora / 1000 * 1.7 + i * 0.55;
+        const aRy = Math.sin(onda) * 6 + clamp(nx, -1.4, 1.4) * f * 24;
+        const aRx = Math.cos(onda * 0.8) * 3.5 - clamp(ny, -1.4, 1.4) * f * 24;
+        const aZ = f * 22;
+        const aY = Math.sin(onda * 1.1) * 0.012 - f * 0.05;
+        const k = 0.14 * dt;
+        L.ry += (aRy - L.ry) * k; L.rx += (aRx - L.rx) * k;
+        L.z += (aZ - L.z) * k; L.y += (aY - L.y) * k;
+        L.el.style.transform = `translate3d(0,${L.y.toFixed(3)}em,${L.z.toFixed(1)}px) rotateX(${L.rx.toFixed(2)}deg) rotateY(${L.ry.toFixed(2)}deg)`;
+      });
     }
 
-    // faixas: andam sempre e aceleram com a rolagem
+    // faixas
     trilhos.forEach(t => {
       const r = t.el.getBoundingClientRect();
       if (r.bottom < -50 || r.top > vh + 50) return;
-      t.x += t.dir * t.vel * (0.6 + Math.abs(vel) * 0.35) * dt;
+      t.x += t.dir * t.vel * (1 + Math.abs(vel) * 0.12) * dt;
       if (t.x <= -t.u) t.x += t.u;
       if (t.x > 0) t.x -= t.u;
       t.el.style.transform = `translate3d(${t.x.toFixed(2)}px,0,0)`;
     });
 
-    // busto: sobe mais devagar que a página e gira de leve
+    // busto
     const h = historia.getBoundingClientRect();
     if (h.top < vh && h.bottom > 0) {
       const ph = clamp((vh - h.top) / vh);
@@ -664,45 +790,36 @@
       busto.style.setProperty('--br', ((1 - ph) * -4 + rx * 2).toFixed(2) + 'deg');
     }
 
-    // gastronomia: o título fica parado no topo e some conforme a rolagem
+    // gastronomia
     const g = gastro.getBoundingClientRect();
     if (g.top < vh && g.bottom > 0) {
-      const pt = clamp(-g.top / (vh * 0.75));
-      titulo.style.setProperty('--o', (1 - pt).toFixed(3));
-      titulo.style.setProperty('--ty', (-pt * 70).toFixed(1) + 'px');
-      titulo.style.setProperty('--s', (1 - pt * 0.12).toFixed(3));
-      titulo.style.setProperty('--b', (pt * 10).toFixed(1) + 'px');
-
-      // fotos: velocidades diferentes, parallax dentro da moldura e somem ao sair por cima
-      fotos.forEach(f => {
-        const r = f.getBoundingClientRect();
-        if (r.bottom < -200 || r.top > vh + 200) return;
-        const meio = r.top + r.height / 2 - vh / 2;
-        f.style.setProperty('--py', (meio * Number(f.dataset.v)).toFixed(1) + 'px');
-        const pi = clamp((vh - r.top) / (vh + r.height));
-        f.style.setProperty('--ip', (-15 * pi).toFixed(2) + '%');
-        const saida = clamp(r.bottom / (vh * 0.4));
-        f.style.setProperty('--sai-o', saida.toFixed(3));
-        f.style.setProperty('--sai-s', (0.88 + saida * 0.12).toFixed(3));
-      });
+      const percorrido = -g.top;
+      const p = clamp(percorrido / (vh * 1.1));
+      // o título só some
+      tituloGastro.style.setProperty('--o', (1 - clamp(percorrido / (vh * 0.35))).toFixed(3));
+      // depois da explosão, o campo de fotos acompanha o mouse
+      const alvoPx = (toque ? Math.sin(agora / 2200) * 0.35 : -mx) * innerWidth * 0.07;
+      const alvoPy = (toque ? Math.cos(agora / 2600) * 0.25 : -my) * vh * 0.07;
+      pmx += (alvoPx - pmx) * 0.06 * dt;
+      pmy += (alvoPy - pmy) * 0.06 * dt;
+      const sobra = gastro.offsetHeight - vh - vh * 1.1;
+      const extra = clamp((percorrido - vh * 1.1) / Math.max(sobra, 1)) * vh * 0.12;
+      pintaFotos(p, pmx, pmy, extra);
     }
 
     requestAnimationFrame(quadro);
   };
 
-  const comecar = () => {
-    if (lenis) {
-      const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(quadro);
-  };
-  comecar();
+  if (lenis) {
+    const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(quadro);
 
   let espera;
   addEventListener('resize', () => {
     clearTimeout(espera);
-    espera = setTimeout(() => trilhos.forEach(t => { t.u = t.encher(); t.x = 0; }), 150);
+    espera = setTimeout(() => { trilhos.forEach(t => { t.u = t.encher(); t.x = 0; }); montarFotos(); }, 150);
   });
 })();
 </script>
